@@ -2,6 +2,8 @@
 #include "led.h"
 #include "light.h"
 
+#define INDICATOR_CYCLE_IN_USB_MSC_MODE (1000)
+
 /**
  * @brief  Indicator initialization.
  * @param  None
@@ -19,7 +21,7 @@ void indicator(void)
  */
 void indicator_task(void)
 {
-#define INDICATOR_CYCLE_IN_USB_MSC_MODE (1000)
+//#define INDICATOR_CYCLE_IN_USB_MSC_MODE (1000)
 
     static time_ms_t tick = 0;
 

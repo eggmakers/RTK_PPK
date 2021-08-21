@@ -43,7 +43,7 @@ bool MX_FATFS_Init(void);
 #define         PPK_FILE_NAME_SIZE          20
 #define         SIGLE_WRITE_DATA_SIZE       511
 
-void set_file_valid(void);
+//void set_file_valid(void);
 void set_file_valid_or_not(bool file_mode);
 bool get_file_valid_or_not(void);
 void fatfs_log_message(uint8_t* data,uint16_t size);

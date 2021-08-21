@@ -152,7 +152,7 @@ static bool rtcm_parse(uint8_t temp)
 			{
 				if( ((parse_rtk_data_ok_cnt++)%20) ==0 )
 				{
-					/** 每接收并且解析成功10次的rtcm数据 */
+					/** 每接收并且解析成功20次的rtcm数据 */
 					printf("\r\n>>>>> parse_rtk_data_ok = %d <<<<<\r\n",parse_rtk_data_ok_cnt);
 				}
 				
@@ -194,6 +194,7 @@ void parse_rtcm_data(uint8_t data_buff[], uint16_t data_len)
 		if(rtcm_parse(data_buff[index]) == true)
 		{
 			/** do something */
+			LED3_TOGGLE();
 		}
 	}
 }

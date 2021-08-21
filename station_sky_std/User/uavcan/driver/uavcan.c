@@ -158,7 +158,7 @@ static void onTransferReceived(CanardInstance* ins, CanardRxTransfer* transfer)
 
 		if(transfer->data_type_id == UAVCAN_EQUIPMENT_GNSS_RTCMSTREAM_ID)
 		{
-			//printf("Are you onTransferReceived handle_rtcm\n");
+			printf("Are you onTransferReceived handle_rtcm\n");
 			// 接收到RTCM，需要转发到板卡
 			handle_rtcm(transfer);
 		}
@@ -608,7 +608,7 @@ void uavcan_task(void)
 	//if (SK3_STANDARD == 1)
 	//{
 		//sk3, ecef
-	  //  send_gnss();
+	   send_gnss();
 	//}
 	//else if (SK3_STANDARD == 2)
 	//{

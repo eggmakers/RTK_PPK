@@ -15,7 +15,7 @@
 #define USART1_DMA_RX_BUFF_SIZE 512
 
 /** 用于接收kx数据(本工程用不到,预留) */
-#define USART6_DMA_RX_BUFF_SIZE 128
+#define USART6_DMA_RX_BUFF_SIZE (1024*6)
 
 /** 用于存储rtk数据 */
 #define USART2_DMA_RX_BUFF_SIZE (1024*6)

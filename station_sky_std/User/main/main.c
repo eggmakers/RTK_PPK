@@ -21,7 +21,7 @@ extern uint8_t sk3_select;
   * @brief System Clock Configuration
   * @retval None
   */
-void clk_conf(void)
+void clk_conf(uint32_t pllm,uint32_t plln,uint32_t pllq)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
@@ -36,10 +36,10 @@ void clk_conf(void)
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLM = 4;
-  RCC_OscInitStruct.PLL.PLLN = 168;
+  RCC_OscInitStruct.PLL.PLLM = pllm;
+  RCC_OscInitStruct.PLL.PLLN = plln;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-  RCC_OscInitStruct.PLL.PLLQ = 7;
+  RCC_OscInitStruct.PLL.PLLQ = pllq;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -97,18 +97,18 @@ void bk_up_init()
     HAL_PWR_EnableBkUpReg();	
 }
 
-void params_init(void)
-{	
-	//此处没有考虑移植, 只在重启节点后才选择SK3或标准化
-	if (sk3_select == 0x01)
-	{
-		SK3_STANDARD = 1;
-	}
-	else if (sk3_select == 0x02)
-	{
-		SK3_STANDARD = 2;
-	}
-}
+//void params_init(void)
+//{	
+//	//此处没有考虑移植, 只在重启节点后才选择SK3或标准化
+//	if (sk3_select == 0x01)
+//	{
+//		SK3_STANDARD = 1;
+//	}
+//	else if (sk3_select == 0x02)
+//	{
+//		SK3_STANDARD = 2;
+//	}
+//}
 
 
 /**
@@ -117,21 +117,41 @@ void params_init(void)
   */
 int main(void)
 {
-	
+	uint32_t Pllm = 0;
+	uint32_t Plln = 0;
+	uint32_t Pllq = 0;
 	
 	sys_remap();
 	HAL_Init();
-	clk_conf();
+	
+//if (SK3_STANDARD == 2)//sk1
+//{	
+		Pllm = 8;
+		Plln = 336;
+		Pllq = 7;
+//	
+//}	
+//	
+//if (SK3_STANDARD == 1)//sk3
+//{	
+//		Pllm = 4;
+//		Plln = 168;
+//		Pllq = 7;
+//	
+//}		
+//	
+	clk_conf(Pllm,Plln,Pllq);
 	time_init();
 	gpio_init();
+	
 	dma_init();
 	usart_init();
 	led_init();
 	
-	/*初始状态灯*/
-	LED1_OFF();
-	LED2_TOGGLE();
-	LED3_OFF();
+//	/*初始状态灯*/
+//	LED1_OFF();
+//	LED2_TOGGLE();
+//	LED3_OFF();
 	
 	
 	bk_up_init();
@@ -147,6 +167,7 @@ int main(void)
 			
 			while(1)
 			{
+				printf("system running...\r\n");
 				led_task();
 			}
 		}
@@ -155,40 +176,6 @@ int main(void)
 	#if 1
 	/* 等待板卡上电稳定(this is necessary.) **/
 	HAL_Delay(5000);
-	
-	//bootloader的时间加上延时；15s
-//	HAL_Delay(2000);
-//	LED1_ON();
-//	LED2_TOGGLE();
-//	LED3_ON();
-//	HAL_Delay(2000);
-//	LED1_OFF();
-//	LED2_TOGGLE();
-//	LED3_OFF();
-//	HAL_Delay(2000);
-//	LED1_ON();
-//	LED2_TOGGLE();
-//	LED3_ON();
-//		
-//	HAL_Delay(3000);
-//	LED1_OFF();
-//	LED2_TOGGLE();
-//	LED3_OFF();
-	
-//	HAL_Delay(2000);
-//  LED1_ON();
-//	LED2_TOGGLE();
-//	LED3_ON();
-//	
-//	HAL_Delay(2000);
-//	LED1_OFF();
-//	LED2_TOGGLE();
-//	LED3_OFF();
-//	
-//	HAL_Delay(2000);
-//	LED1_ON();
-//	LED2_TOGGLE();
-//	LED3_ON();
 	
 	
 	while(gnss_init(&huart3) == false)
@@ -200,7 +187,7 @@ int main(void)
 	
 	while (uavcan_init() != CAN_BUS_OK);
 	
-	params_init();//放在加载参数之后，判断参数
+//	params_init();//放在加载参数之后，判断参数
 	
 	while (1)	
 	{
@@ -208,7 +195,6 @@ int main(void)
 		/** 注意检查板卡rtk数据串口的电阻有没有接上,如果没有,将读不到rtk数据,
 		*  对于sk1飞控来说,是不需要接的,对于sk3,则需要接。
 		*/
-        
 		rtk_task();
 		ppk_task();
 		uavcan_task();

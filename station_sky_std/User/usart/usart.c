@@ -688,8 +688,8 @@ void usart_init(void)
 	MX_USART2_UART_Init();
 	//Uart3, for ppk
 	MX_USART3_UART_Init();
-	//Uart6, for kx(not used)
-	//MX_USART6_UART_Init();
+	//Uart6, for kx
+	MX_USART6_UART_Init();
 }
 
 int fputc(int ch,FILE *file)

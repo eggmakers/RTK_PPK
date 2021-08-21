@@ -21,6 +21,7 @@
 #define SINGLE_ANTENNA 1
 #define RTK_MODE 0
 #define PPK_MODE 1
+#define RTK_TO_SK1_Mode 2
 
 // 消息帧对应的ID
 #define BESTPOS_ID      0x2A
@@ -36,12 +37,12 @@
 
 
 #define MARKPOS_EVENT1  0xB5    /** novatel event1 消息ID*/
-#define MARKPOS_EVENTALL  0x134 /** 和芯星通eventall 消息ID*/
+#define MARKPOS_EVENTALL  0x134 /** 和芯星通eventall 消息ID 308*/
 #define HEADING_ID      0x3CB
 #define PSRDOP2_ID      0x48B
 #define BESTXYZ_ID      0xF1
 
-bool parse1(uint8_t data);
+bool rtk_parse(uint8_t data);
 //#define NOVA_PREAMBLE1  0xAA
 //#define NOVA_PREAMBLE2  0x44
 //#define NOVA_PREAMBLE3  0x12 
@@ -89,8 +90,8 @@ uint16_t rangecmp_counter = 0;
 uint16_t mark_counter = 0;
 uint16_t markevent_counter = 0;
 static bool parse_ok_cmd(uint8_t temp_data);
-bool process_message(void);
-bool process_message1(void);
+bool rtk_process_message(void);
+bool ppk_process_message(void);
 #if NOVA_DEBUGGING
 
 #include <cstdio>
@@ -198,6 +199,22 @@ const char* _initialisation_rtk_cmd[7] =
 };
 
 #else
+
+/*SK1需要的数据帧*/
+const char* _initialisation_rtk_to_flight_cmd[8] =
+{
+	// 关闭 RTK 的所有消息帧
+	"\r\nunlogall com3\r\n",
+	"com com3 115200 n 8 1 n off\r\n",
+	 // 配置成移动站,接收rtcm数据
+	"mode rover\r\n",
+	"fix none\r\n",
+	"log com3 bestposb  ontime 0.2\r\n",
+	"log com3 bestvelb  ontime 0.2\r\n",
+	"log com3 psrdopb   onchanged\r\n",
+	"saveconfig\r\n",
+};
+
 /** sk3需要的数据帧 */
 const char* _initialisation_rtk_cmd[] =
 {
@@ -210,7 +227,7 @@ const char* _initialisation_rtk_cmd[] =
 	"log com1 bestxyzb  ontime 0.05\r\n",	//241, Best available cartesian position and velocity
 	"log com1 bestposb  ontime 0.05\r\n",	//42, Best position
 	"log com1 psrdopb  onchanged\r\n",		//174, Pseudorange DOP
-	"log com1 timeb ontime 1\r\n",
+	"log com1 timeb ontime 1\r\n",				//101
 	"log com1 headingb ontime 0.05\r\n",	//971,heading
 	"log com1 bestvelb ontime 0.05\r\n",	//99，bestvel
 	"log com1 psrdop2b onchanged\r\n"		//1163, psrdop2,vdop, 和星芯通没有
@@ -714,6 +731,10 @@ bool init_work_cmd(uint8_t work_mode)
 	{
 		j = (sizeof(_initialisation_ppk_cmd) / sizeof(_initialisation_ppk_cmd[0]));
 	}
+	else if(work_mode == RTK_TO_SK1_Mode)
+	{
+		j = (sizeof(_initialisation_rtk_to_flight_cmd) / sizeof(_initialisation_rtk_to_flight_cmd[0]));
+	}
 
     for (uint8_t i = 0; i < j; )
     {
@@ -727,6 +748,11 @@ bool init_work_cmd(uint8_t work_mode)
     		init_str = _initialisation_ppk_cmd[i];
 			printf("  ppk_cmd[%d] %s  \n",i,_initialisation_ppk_cmd[i]);
     	}
+			else if(work_mode == RTK_TO_SK1_Mode)
+			{
+				init_str = _initialisation_rtk_to_flight_cmd[i];
+				printf("  rtk_to_flight_cmd[%d] %s  \n",i,_initialisation_rtk_to_flight_cmd[i]);
+			}
 
         while(novtel_uart->gState != HAL_UART_STATE_READY)
         {
@@ -747,9 +773,13 @@ bool init_work_cmd(uint8_t work_mode)
 					if(work_mode == RTK_MODE)
 					{
 					printf("  %s   is ok\n\n",_initialisation_rtk_cmd[i]);
-					}else
+					}else if(work_mode == PPK_MODE)
 					{
 					printf("  %s   is ok\n\n",_initialisation_ppk_cmd[i]);
+					}
+					else if(work_mode == RTK_TO_SK1_Mode)
+					{
+						printf("  %s   is ok\n\n",_initialisation_rtk_to_flight_cmd[i]);
 					}
             		i++;
             		/** 跳出内层循环 */
@@ -792,11 +822,16 @@ bool gnss_init(UART_HandleTypeDef *port)
 		case 2:/** 第三步:配置板卡的ppk指令 */
 			if( init_work_cmd(PPK_MODE)==true )
 			{
+				step++;
+			}
+			break;
+		case 3:
+			if(init_work_cmd(RTK_TO_SK1_Mode)==true)
+			{
 				gnss_initialized = true;
 				status = true;
 			}
 			break;
-
 		default :
 			break;
 	}
@@ -896,7 +931,7 @@ void rtk_task()
 		{
 			for(uint16_t j = 0 ; j < len ; j++)
 			{
-				parse1(rtk_buffer[j]);
+				rtk_parse(rtk_buffer[j]);
 			}
 		}
 	}
@@ -1012,7 +1047,7 @@ bool parse(uint8_t data)
         if (nova_msg.crc == crc)
         {
             crc_suc_counter++;
-            return process_message();
+            return ppk_process_message();
         }
         else
         {
@@ -1025,7 +1060,7 @@ bool parse(uint8_t data)
     return false;
 }
 
-bool parse1(uint8_t data)
+bool rtk_parse(uint8_t data)
 {
 	static uint16_t crc_error_counter = 0;
     switch (nova_msg1.nova_state)
@@ -1133,7 +1168,7 @@ bool parse1(uint8_t data)
         if (nova_msg1.crc == crc)
         {
             crc_suc_counter++;
-            return process_message1();
+            return rtk_process_message();
         }
         else
         {
@@ -1149,12 +1184,12 @@ bool parse1(uint8_t data)
 
 
 
-bool process_message(void)
+bool ppk_process_message(void)
 {
 	uint16_t length = 0;
 	mmc_GnssEcef* gnss_ecef = get_gnss_ecef();
     uint16_t messageid = nova_msg.header.nova_headeru.messageid;
-
+	printf("PPK Message ID = %d\r\n",messageid);
     switch(messageid)
     {
 
@@ -1180,7 +1215,7 @@ bool process_message(void)
 
             new_position = true;
             break;
-        case 99:
+        case 99: //bestvel
             state.ground_speed = (float) nova_msg.data.bestvelu.horspd;
             state.ground_course = (float) nova_msg.data.bestvelu.trkgnd;
             state.velocity.z = -(float) nova_msg.data.bestvelu.vertspd;
@@ -1196,7 +1231,7 @@ bool process_message(void)
             break;
 
         /** PPK start */
-        case TIME_ID:
+        case TIME_ID://101
             if(nova_msg.data.time.clock_stat == 0 && nova_msg.data.time.utc_stat == 1)
             {
                 utc_time_valid = true;
@@ -1243,7 +1278,7 @@ bool process_message(void)
             gps_counter ++;
             break;
 
-        case RANGECMP_ID:
+        case RANGECMP_ID://140
             length = nova_msg.header.nova_headeru.headerlength + nova_msg.header.nova_headeru.messagelength + CRC_LENGTH;
             fatfs_log_message((nova_msg.header.data),length);
             rangecmp_counter ++;
@@ -1271,7 +1306,8 @@ bool process_message(void)
 
     if( (HAL_GetTick()-last_time) >= 5000 )
     {
-    	printf("\r\n>>>>>>>>ppk_cnt:tim:%4d,bd2:%4d,gpse:%4d,bds:%4d,glo:%4d,gps:%4d,rangecmp:%4d,eventall_id:%4d,mark:%4d.<<<<<<<<<\r\n",tim_counter,bd2_counter,gpseph_counter,bds_counter,glo_counter,gps_counter,rangecmp_counter,markevent_counter,mark_counter);
+    	printf("\r\n>>>>>>>>ppk_cnt:tim:%4d,bd2:%4d,gpse:%4d,bds:%4d,glo:%4d,gps:%4d,rangecmp:%4d,eventall_id:%4d,mark:%4d.<<<<<<<<<\r\n"
+			,tim_counter,bd2_counter,gpseph_counter,bds_counter,glo_counter,gps_counter,rangecmp_counter,markevent_counter,mark_counter);
     	last_time = HAL_GetTick();
     }
     /* ensure out position and velocity stay insync */
@@ -1284,7 +1320,7 @@ bool process_message(void)
     return false;
 }
 
-bool process_message1()
+bool rtk_process_message()
 {
 	static uint16_t best_id = 0;
 	static uint16_t psrp2_id = 0;
@@ -1294,6 +1330,7 @@ bool process_message1()
 
     uint16_t messageid = nova_msg1.header.nova_headeru.messageid;
     mmc_GnssEcef* gnss_ecef = get_gnss_ecef();
+	printf("RTK Message ID = %d\r\n",messageid);
 
     switch(messageid)
     {
@@ -1345,8 +1382,8 @@ bool process_message1()
             break;
 			
 
-        /** PPK start */
-        case TIME_ID:
+        /** RTK start */
+        case TIME_ID://101
             if(nova_msg1.data.time.clock_stat == 0 && nova_msg1.data.time.utc_stat == 1)
             {
                 utc_time_valid = true;
@@ -1370,7 +1407,7 @@ bool process_message1()
 			
 			//bestxyz；GnssEcef
 			
-		case BESTXYZ_ID:
+		case BESTXYZ_ID://241
 			length = nova_msg1.header.nova_headeru.headerlength + nova_msg1.header.nova_headeru.messagelength + CRC_LENGTH;
 			best_id++;
 			update_bestxyz(gnss_ecef, nova_msg1.data.bestxyzb);
@@ -1404,12 +1441,12 @@ bool process_message1()
     }
 
 
-    /** PPK end **/
+    /** RTK end **/
     static uint32_t last_time = 0;
 
     if( (HAL_GetTick()-last_time) >= 5000 )
     {
-    	printf("\r\n>>>>>>>rtk_cnt:tim_id = %d ,best_id = %d , psrp2_id = %d , head_id = %d.<<<<<<<<<\r\n",tim_counter,best_id,psrp2_id,head_id);
+    	printf("\r\n>>>>>>>rtk_cnt:time_id = %d ,bestxyz_id = %d , psrp2_id = %d , heading_id = %d.<<<<<<<<<\r\n",tim_counter,best_id,psrp2_id,head_id);
     	last_time = HAL_GetTick();
     }
     /* ensure out position and velocity stay insync */

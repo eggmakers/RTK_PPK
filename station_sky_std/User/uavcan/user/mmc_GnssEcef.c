@@ -408,6 +408,7 @@ void update_bestxyz(mmc_GnssEcef *gnss_ecef,const bestxyz bestxyzb)
         }
     }
 
+		printf("bestxyz pos type = %d\r\n",bestxyzb.pos_type);
     gnss_ecef->pos_type = bestxyzb.pos_type;
     gnss_ecef->pos_sol = bestxyzb.pos_sol_stat;
     gnss_ecef->vel_type = bestxyzb.vel_type;
