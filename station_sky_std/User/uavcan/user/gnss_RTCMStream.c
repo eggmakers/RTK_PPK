@@ -196,11 +196,11 @@ void handle_rtcm(CanardRxTransfer *transfer)
 	canardDecodeScalar(transfer, 0, 8, false,&protocol_id);
 	
 	/** 按字节解码rtcm数据,transfer->payload_len-1,是因为前面的第一个字节是protocol_id,第二个开始才是rtcm数据 */
-	for(uint8_t i = 0;i < transfer->payload_len - 1; i++)
+	for(uint16_t i = 0;i < transfer->payload_len - 1; i++)
 	{
 		canardDecodeScalar(transfer, 8+8*i, 8, false,&rtcm_buf[i]);
 	}
 	
-    parse_rtcm_data(&rtcm_buf[0], transfer->payload_len - 1);
+    parse_rtcm_data(&rtcm_buf[0], transfer->payload_len - 2);
 }
 

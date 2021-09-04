@@ -93,7 +93,7 @@ static bool rtcm_parse(uint8_t temp)
 
 	switch (rtcm_state)
 	{
-
+	
 	case RTCM_HEAD:
 		data_cnt = 0;
 		data_len = 0;
@@ -184,7 +184,7 @@ static bool rtcm_parse(uint8_t temp)
 /**
 * @brief  处理rtk接收到的DMA数据,解析数据
 * @param data 需要处理的数据缓冲
-* @param recv_len 数据缓冲的长度
+* @param data_len 数据缓冲的长度
 * @retval None
   */
 void parse_rtcm_data(uint8_t data_buff[], uint16_t data_len)
@@ -194,7 +194,7 @@ void parse_rtcm_data(uint8_t data_buff[], uint16_t data_len)
 		if(rtcm_parse(data_buff[index]) == true)
 		{
 			/** do something */
-			LED3_TOGGLE();
+			printf("rtcm parse done\r\n");
 		}
 	}
 }
