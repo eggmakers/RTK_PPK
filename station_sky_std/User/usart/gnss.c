@@ -162,7 +162,7 @@ const char* _initialisation_baud_rate[3] =
 };
 
 #else
-const char* _initialisation_ppk_cmd[6] =
+const char* _initialisation_ppk_cmd[] =
 {
 	"\r\nunlogall com2\r\n",
 	"CONFIG EVENT ENABLE NEGATIVE 10\r\n",
@@ -221,16 +221,16 @@ const char* _initialisation_rtk_cmd[] =
 	// 关闭 RTK 的所有消息帧
 	"\r\nunlogall com1\r\n",
 	"com com1 115200 n 8 1 n off\r\n",
+	//"com com1 460800 n 8 1 n off\r\n",
 	 // 配置成移动站,接收rtcm数据
 	"mode rover\r\n",
 	"fix none\r\n",
-	"log com1 bestxyzb  ontime 0.05\r\n",	//241, Best available cartesian position and velocity
-	"log com1 bestposb  ontime 0.05\r\n",	//42, Best position
+	"log com1 bestxyzb  ontime 0.1\r\n",	//241, Best available cartesian position and velocity
+	"log com1 psrvelb  ontime 0.1\r\n"
+    "log com1 bestposb  ontime 0.2\r\n",	//42, Best position
 	"log com1 psrdopb  onchanged\r\n",		//174, Pseudorange DOP
-	"log com1 timeb ontime 1\r\n",				//101
+	//"log com1 timeb ontime 1\r\n",
 	"log com1 headingb ontime 0.05\r\n",	//971,heading
-	"log com1 bestvelb ontime 0.05\r\n",	//99，bestvel
-	"log com1 psrdop2b onchanged\r\n"		//1163, psrdop2,vdop, 和星芯通没有
 };
 
 #endif

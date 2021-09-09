@@ -126,8 +126,8 @@ int main(void)
 	
 //if (SK3_STANDARD == 2)//sk1
 //{	
-		Pllm = 8;
-		Plln = 336;
+		Pllm = 4;
+		Plln = 168;
 		Pllq = 7;
 //	
 //}	

@@ -28,7 +28,7 @@
  * @note CAN1
  */
 CanardInstance g_canard1;          /** CAN1 UAVCAN 实例 */
-static uint8_t memory_pool1[1024*10]; /** CAN1 内存池 */
+static uint8_t memory_pool1[1024*4]; /** CAN1 内存池 */
 static can_result_e gloal_stat1;   /** Mark global status for CAN1. */
 extern uint8_t SK3_STANDARD;
 
@@ -156,7 +156,7 @@ static void onTransferReceived(CanardInstance* ins, CanardRxTransfer* transfer)
 			uavcan_get_node_info_respond(ins, transfer);
 		}
 
-		if(transfer->data_type_id == UAVCAN_EQUIPMENT_GNSS_RTCMSTREAM_ID)
+		if((transfer->transfer_type == CanardTransferTypeBroadcast) && (transfer->data_type_id == UAVCAN_EQUIPMENT_GNSS_RTCMSTREAM_ID))
 		{
 			printf("Receive the RTCM message\r\n");
 			// 接收到RTCM，需要转发到板卡
