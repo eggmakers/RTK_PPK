@@ -163,24 +163,24 @@ static void onTransferReceived(CanardInstance* ins, CanardRxTransfer* transfer)
 			handle_rtcm(transfer);
 		}
 		
-		//重启节点
-		if ((transfer->transfer_type == CanardTransferTypeRequest) && (transfer->data_type_id == UAVCAN_PROTOCOL_RESTARTNODE_ID))
-		{
-			//printf("Are you onTransferReceived uavcan_handle_node_restart\n");
-			uavcan_handle_node_restart(ins, transfer);
-		}
-		
-		//读、设置参数
-		if ((transfer->transfer_type == CanardTransferTypeRequest) && (transfer->data_type_id == UAVCAN_PROTOCOL_PARAM_GETSET_ID))
-		{
-			g_handle_param_get_set(ins, transfer);
-		}
-		
-		//执行参数
-		if ((transfer->transfer_type == CanardTransferTypeRequest) &&(transfer->data_type_id == UAVCAN_PROTOCOL_PARAM_EXECUTEOPCODE_ID))
-		{
-			g_handle_param_execute(ins, transfer);
-		}
+//		//重启节点
+//		if ((transfer->transfer_type == CanardTransferTypeRequest) && (transfer->data_type_id == UAVCAN_PROTOCOL_RESTARTNODE_ID))
+//		{
+//			//printf("Are you onTransferReceived uavcan_handle_node_restart\n");
+//			uavcan_handle_node_restart(ins, transfer);
+//		}
+//		
+//		//读、设置参数
+//		if ((transfer->transfer_type == CanardTransferTypeRequest) && (transfer->data_type_id == UAVCAN_PROTOCOL_PARAM_GETSET_ID))
+//		{
+//			g_handle_param_get_set(ins, transfer);
+//		}
+//		
+//		//执行参数
+//		if ((transfer->transfer_type == CanardTransferTypeRequest) &&(transfer->data_type_id == UAVCAN_PROTOCOL_PARAM_EXECUTEOPCODE_ID))
+//		{
+//			g_handle_param_execute(ins, transfer);
+//		}
 
 	}
 }
@@ -614,11 +614,11 @@ void uavcan_task(void)
 	//{
 	
 		//标准化
-		send_fix2();
-		
-		send_MagneticFieldStrength();
-		
-		send_auxiliary();
+//		send_fix2();
+//		
+//		send_MagneticFieldStrength();
+//		
+//		send_auxiliary();
 	//}
 
 

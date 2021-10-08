@@ -112,9 +112,16 @@ void led_init(void)
 
 void led_task(void)
 {
-//		printf("system running...\r\n");
-		HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_1);
-		HAL_Delay(500);
+	#define INDICATOR_CYCLE_IN_USB_MSC_MODE (1000)
+
+    static time_ms_t tick = 0;
+
+    if (millis() - tick >= INDICATOR_CYCLE_IN_USB_MSC_MODE)
+    {
+        LED1_TOGGLE();
+
+        tick = millis();
+    }
 }
 
 //void SK1_USB_Task()

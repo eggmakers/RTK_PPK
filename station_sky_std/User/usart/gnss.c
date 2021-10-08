@@ -820,6 +820,8 @@ bool gnss_init(UART_HandleTypeDef *port)
 			break;
 
 		case 2:/** 第三步:配置板卡的ppk指令 */
+			
+		
 			if( init_work_cmd(PPK_MODE)==true )
 			{
 				step++;
@@ -1356,7 +1358,7 @@ bool rtk_process_message()
             state.status = (GPS_Status)nova_msg1.data.bestposu.postype;
             state.postype = nova_msg1.data.bestposu.postype;
         
-            update_fix2_data(&nova_msg1);
+//            update_fix2_data(&nova_msg1);
             new_position = true;
             fix2_data_update = true;
             break;
@@ -1377,7 +1379,7 @@ bool rtk_process_message()
             state.vdop = (uint16_t) (nova_msg1.data.psrdopu.htdop*100);
             
             update_auxiliary(&nova_msg1);
-			update_fix2_psrdop(&nova_msg1);
+//			update_fix2_psrdop(&nova_msg1);
             auxiliary_update = true;
             break;
 			
@@ -1412,7 +1414,7 @@ bool rtk_process_message()
 			best_id++;
 			update_bestxyz(gnss_ecef, nova_msg1.data.bestxyzb);
 			
-			update_fix2_bestxyz(&nova_msg1);
+//			update_fix2_bestxyz(&nova_msg1);
 			break;
 
 		case PSRDOP2_ID:	//nova板卡配置，和星芯通没有

@@ -48,8 +48,7 @@ saturated float16[<=9] magnetic_field_covariance
 typedef struct
 {
     // FieldTypes
-	//float¸ÄÎªuint16_t 
-    uint16_t      magnetic_field_ga[3];          // Static Array 16bit[3] max items
+    float      magnetic_field_ga[3];          // Static Array 16bit[3] max items
     struct
     {
         uint8_t    len;                       // Dynamic array length

@@ -21,7 +21,7 @@ extern uint8_t sk3_select;
   * @brief System Clock Configuration
   * @retval None
   */
-void clk_conf(uint32_t pllm,uint32_t plln,uint32_t pllq)
+void clk_conf()
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
@@ -36,10 +36,10 @@ void clk_conf(uint32_t pllm,uint32_t plln,uint32_t pllq)
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLM = pllm;
-  RCC_OscInitStruct.PLL.PLLN = plln;
+  RCC_OscInitStruct.PLL.PLLM = 4;
+  RCC_OscInitStruct.PLL.PLLN = 168;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-  RCC_OscInitStruct.PLL.PLLQ = pllq;
+  RCC_OscInitStruct.PLL.PLLQ = 7;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -97,19 +97,6 @@ void bk_up_init()
     HAL_PWR_EnableBkUpReg();	
 }
 
-//void params_init(void)
-//{	
-//	//此处没有考虑移植, 只在重启节点后才选择SK3或标准化
-//	if (sk3_select == 0x01)
-//	{
-//		SK3_STANDARD = 1;
-//	}
-//	else if (sk3_select == 0x02)
-//	{
-//		SK3_STANDARD = 2;
-//	}
-//}
-
 
 /**
   * @brief  The application entry point.
@@ -117,30 +104,9 @@ void bk_up_init()
   */
 int main(void)
 {
-	uint32_t Pllm = 0;
-	uint32_t Plln = 0;
-	uint32_t Pllq = 0;
-	
-	sys_remap();
+//	sys_remap();
 	HAL_Init();
-	
-//if (SK3_STANDARD == 2)//sk1
-//{	
-		Pllm = 4;
-		Plln = 168;
-		Pllq = 7;
-//	
-//}	
-//	
-//if (SK3_STANDARD == 1)//sk3
-//{	
-//		Pllm = 4;
-//		Plln = 168;
-//		Pllq = 7;
-//	
-//}		
-//	
-	clk_conf(Pllm,Plln,Pllq);
+	clk_conf();
 	time_init();
 	gpio_init();
 	

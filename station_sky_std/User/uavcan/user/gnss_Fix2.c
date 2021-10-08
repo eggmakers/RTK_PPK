@@ -278,7 +278,7 @@ int32_t uavcan_equipment_gnss_Fix2_decode_internal(const CanardRxTransfer* trans
     //  - Get Array
     if (dyn_arr_buf)
     {
-        dest->covariance.data = (uint16_t*)*dyn_arr_buf;
+        dest->covariance.data = (float*)*dyn_arr_buf;
     }
 
     for (c = 0; c < dest->covariance.len; c++)
@@ -539,7 +539,7 @@ void send_fix2(void)
     }
 }
 
-uint16_t covariance_data[6];
+float covariance_data[6];
 uavcan_equipment_gnss_ECEFPositionVelocity gnss_ECEFPositionVelocity;
 
 void g_init_fix2_struct(void)

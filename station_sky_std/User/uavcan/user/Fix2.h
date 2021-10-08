@@ -204,7 +204,7 @@ typedef struct
     struct
     {
         uint8_t    len;                       // Dynamic array length
-        uint16_t*     data;                      // Dynamic Array 16bit[36] max items
+        float*     data;                      // Dynamic Array 16bit[36] max items
     } covariance;
     float      pdop;                          // float16 Saturate
     struct

@@ -207,14 +207,16 @@ bool update_MagneticFieldStrength_data(nova_msg_parser *Magnetic_Data)
         return false;
     }
 	//天线航向和飞机机头航向的转换
-	double degree = -(Magnetic_Data->data.headingb.heading - 90);
+	//double degree = -(Magnetic_Data->data.headingb.heading - 90);
 	//度转换弧度
-	degree = (Magnetic_Data->data.headingb.heading * PI) / 180;
+	//degree = (Magnetic_Data->data.headingb.heading * PI) / 180;
 	
-	MagneticFieldStrength_Data.magnetic_field_ga[0] = canardConvertNativeFloatToFloat16(cos(degree));
-	MagneticFieldStrength_Data.magnetic_field_ga[1] = canardConvertNativeFloatToFloat16(sin(degree));
-	//MagneticFieldStrength_Data.magnetic_field_ga[2] = canardConvertNativeFloatToFloat16(0.0);//直接给0得了；
-	MagneticFieldStrength_Data.magnetic_field_ga[2] = 0;
+	double degree = Magnetic_Data->data.headingb.heading * PI / 180;
+	
+	MagneticFieldStrength_Data.magnetic_field_ga[0] = cos(degree);
+	MagneticFieldStrength_Data.magnetic_field_ga[1] = sin(degree);
+	MagneticFieldStrength_Data.magnetic_field_ga[2] = 0.0;
+	
 	return true;
 }
 
