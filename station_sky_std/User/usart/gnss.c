@@ -730,10 +730,10 @@ bool init_work_cmd(uint8_t work_mode)
 	else if(work_mode == PPK_MODE)
 	{
 		j = (sizeof(_initialisation_ppk_cmd) / sizeof(_initialisation_ppk_cmd[0]));
-//	}
-//	else if(work_mode == RTK_TO_SK1_Mode)
-//	{
-//		j = (sizeof(_initialisation_rtk_to_flight_cmd) / sizeof(_initialisation_rtk_to_flight_cmd[0]));
+	}
+	else if(work_mode == RTK_TO_SK1_Mode)
+	{
+		j = (sizeof(_initialisation_rtk_to_flight_cmd) / sizeof(_initialisation_rtk_to_flight_cmd[0]));
 	}
 
     for (uint8_t i = 0; i < j; )
@@ -748,11 +748,11 @@ bool init_work_cmd(uint8_t work_mode)
     		init_str = _initialisation_ppk_cmd[i];
 			printf("  ppk_cmd[%d] %s  \n",i,_initialisation_ppk_cmd[i]);
     	}
-//			else if(work_mode == RTK_TO_SK1_Mode)
-//			{
-//				init_str = _initialisation_rtk_to_flight_cmd[i];
-//				printf("  rtk_to_flight_cmd[%d] %s  \n",i,_initialisation_rtk_to_flight_cmd[i]);
-//			}
+			else if(work_mode == RTK_TO_SK1_Mode)
+			{
+				init_str = _initialisation_rtk_to_flight_cmd[i];
+				printf("  rtk_to_flight_cmd[%d] %s  \n",i,_initialisation_rtk_to_flight_cmd[i]);
+			}
 
         while(novtel_uart->gState != HAL_UART_STATE_READY)
         {
@@ -777,10 +777,10 @@ bool init_work_cmd(uint8_t work_mode)
 					{
 					printf("  %s   is ok\n\n",_initialisation_ppk_cmd[i]);
 					}
-//					else if(work_mode == RTK_TO_SK1_Mode)
-//					{
-//						printf("  %s   is ok\n\n",_initialisation_rtk_to_flight_cmd[i]);
-//					}
+					else if(work_mode == RTK_TO_SK1_Mode)
+					{
+						printf("  %s   is ok\n\n",_initialisation_rtk_to_flight_cmd[i]);
+					}
             		i++;
             		/** 跳出内层循环 */
             		break;
@@ -824,12 +824,12 @@ bool gnss_init(UART_HandleTypeDef *port)
 		
 			if( init_work_cmd(PPK_MODE)==true )
 			{
-//				step++;
-//			}
-//			break;
-//		case 3:
-//			if(init_work_cmd(RTK_TO_SK1_Mode)==true)
-//			{
+				step++;
+			}
+			break;
+		case 3:
+			if(init_work_cmd(RTK_TO_SK1_Mode)==true)
+			{
 				gnss_initialized = true;
 				status = true;
 			}
