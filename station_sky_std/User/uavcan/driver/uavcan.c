@@ -28,7 +28,7 @@
  * @note CAN1
  */
 CanardInstance g_canard1;          /** CAN1 UAVCAN 实例 */
-static uint8_t memory_pool1[1024*4]; /** CAN1 内存池 */
+static uint8_t memory_pool1[1024*10]; /** CAN1 内存池 */
 static can_result_e gloal_stat1;   /** Mark global status for CAN1. */
 extern uint8_t SK3_STANDARD;
 
@@ -330,16 +330,7 @@ static void canard_handle_tx(can_port_e port)
 				tx_header.TransmitGlobalTime = DISABLE;
 				if (HAL_CAN_AddTxMessage(hcan, &tx_header, (uint8_t *)txf->data, &p_tx_mailbox) == HAL_OK)
 				{
-					//if((__HAL_CAN_GET_FLAG(hcan,CAN_FLAG_TXOK0)==true)||(__HAL_CAN_GET_FLAG(hcan,CAN_FLAG_TXOK1)==true)||(__HAL_CAN_GET_FLAG(hcan,CAN_FLAG_TXOK1)==true))
-					//canardPopTxQueue(ins);
-					//{
-					//canardPopTxQueue(ins);
-					//__HAL_CAN_CLEAR_FLAG(hcan,CAN_FLAG_TXOK0);
-					//__HAL_CAN_CLEAR_FLAG(hcan,CAN_FLAG_TXOK1);	
-					//__HAL_CAN_CLEAR_FLAG(hcan,CAN_FLAG_TXOK2);	
-					//}
 					canardPopTxQueue(ins);
-					
 				}
 				else
 				{

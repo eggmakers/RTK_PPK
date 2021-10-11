@@ -408,7 +408,7 @@ void update_bestxyz(mmc_GnssEcef *gnss_ecef,const bestxyz bestxyzb)
         }
     }
 
-		printf("bestxyz pos type = %d\r\n",bestxyzb.pos_type);
+//		printf("bestxyz pos type = %d\r\n",bestxyzb.pos_type);
     gnss_ecef->pos_type = bestxyzb.pos_type;
     gnss_ecef->pos_sol = bestxyzb.pos_sol_stat;
     gnss_ecef->vel_type = bestxyzb.vel_type;
@@ -507,14 +507,19 @@ void send_gnss(void)
 #if 1
 	static uint32_t last_tick = 0;
 	static uint32_t gnss_update_err_cnt = 0;
-
+	static uint32_t gnss_update_cnt = 0;
     if(get_gnss_updated() == true)
     {
+		if( ((gnss_update_cnt++)%20) ==0 )
+		{
+			printf(">>>>>>gnss_update_cnt:%d\r\n",gnss_update_cnt++);
+		}
     	last_tick = HAL_GetTick();
     	uint8_t gns_buffer[MMC_GNSSECEF_MAX_SIZE];
         gnss_msg = *get_gnss_ecef();
         const uint16_t offset = mmc_GnssEcef_encode(&gnss_msg,gns_buffer);
         static uint8_t transfer_id = 0;
+		
         const int16_t bc_res = canardBroadcast(&g_canard1,
                                                MMC_GNSSECEF_SIGNATURE,
                                                MMC_GNSSECEF_ID,
