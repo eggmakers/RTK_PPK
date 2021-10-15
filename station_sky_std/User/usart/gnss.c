@@ -1359,8 +1359,10 @@ bool rtk_process_message()
             state.status = (GPS_Status)nova_msg1.data.bestposu.postype;
             state.postype = nova_msg1.data.bestposu.postype;
         
-//            update_fix2_data(&nova_msg1);
-            new_position = true;
+            update_fix2_data(&nova_msg1);
+			
+            new_position = true;			//位置更新标志
+			
             fix2_data_update = true;
             break;
         case 99:		//speed---bestvelb
@@ -1380,7 +1382,7 @@ bool rtk_process_message()
             state.vdop = (uint16_t) (nova_msg1.data.psrdopu.htdop*100);
             
             update_auxiliary(&nova_msg1);
-//			update_fix2_psrdop(&nova_msg1);
+						update_fix2_psrdop(&nova_msg1);
             auxiliary_update = true;
             break;
 			
@@ -1414,8 +1416,7 @@ bool rtk_process_message()
 			length = nova_msg1.header.nova_headeru.headerlength + nova_msg1.header.nova_headeru.messagelength + CRC_LENGTH;
 			best_id++;
 			update_bestxyz(gnss_ecef, nova_msg1.data.bestxyzb);
-			
-//			update_fix2_bestxyz(&nova_msg1);
+		update_fix2_bestxyz(&nova_msg1);
 			break;
 
 		case PSRDOP2_ID:	//nova板卡配置，和星芯通没有

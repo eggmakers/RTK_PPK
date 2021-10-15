@@ -8,6 +8,10 @@
 #include "Fix2.h"
 #include "canard.h"
 #include "uavcan.h"
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 /** UAVCAN 实例 */
 extern CanardInstance g_canard1;

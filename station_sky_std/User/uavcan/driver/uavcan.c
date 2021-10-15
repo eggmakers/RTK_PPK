@@ -599,17 +599,17 @@ void uavcan_task(void)
 	//if (SK3_STANDARD == 1)
 	//{
 		//sk3, ecef
-	   send_gnss();
+//	   send_gnss();
 	//}
 	//else if (SK3_STANDARD == 2)
 	//{
 	
 		//标准化
-//		send_fix2();
-//		
-//		send_MagneticFieldStrength();
-//		
-//		send_auxiliary();
+		send_fix2();
+		
+		send_MagneticFieldStrength();
+		
+		send_auxiliary();
 	//}
 
 
