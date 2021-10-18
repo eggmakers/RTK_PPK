@@ -92,17 +92,17 @@ static bool shouldAcceptTransfer(const CanardInstance* ins,
         return true;
     }
 
-	if((transfer_type == CanardTransferTypeRequest) && (data_type_id == UAVCAN_PROTOCOL_PARAM_GETSET_ID))
-	{
-		*out_data_type_signature = UAVCAN_PROTOCOL_PARAM_GETSET_SIGNATURE;
-		return true;
-	}
-	
-	if((transfer_type == CanardTransferTypeRequest) && (data_type_id == UAVCAN_PROTOCOL_PARAM_EXECUTEOPCODE_ID))
-	{
-		*out_data_type_signature = UAVCAN_PROTOCOL_PARAM_EXECUTEOPCODE_SIGNATURE;
-		return true;
-	}
+//	if((transfer_type == CanardTransferTypeRequest) && (data_type_id == UAVCAN_PROTOCOL_PARAM_GETSET_ID))
+//	{
+//		*out_data_type_signature = UAVCAN_PROTOCOL_PARAM_GETSET_SIGNATURE;
+//		return true;
+//	}
+//	
+//	if((transfer_type == CanardTransferTypeRequest) && (data_type_id == UAVCAN_PROTOCOL_PARAM_EXECUTEOPCODE_ID))
+//	{
+//		*out_data_type_signature = UAVCAN_PROTOCOL_PARAM_EXECUTEOPCODE_SIGNATURE;
+//		return true;
+//	}
 	
 	
 #if 1
@@ -596,21 +596,17 @@ void uavcan_task(void)
     canard_handle_clean(CAN_P1);
     //canard_handle_clean(CAN_P2);
 
-	//if (SK3_STANDARD == 1)
-	//{
-		//sk3, ecef
-//	   send_gnss();
-	//}
-	//else if (SK3_STANDARD == 2)
-	//{
+	//sk3, ecef
+    send_gnss();
+		
 	
-		//标准化
-		send_fix2();
-		
-		send_MagneticFieldStrength();
-		
-		send_auxiliary();
-	//}
+	//标准化
+    send_fix2();
+	
+	  send_MagneticFieldStrength();
+    
+    send_auxiliary();
+
 
 
     /** 发送心跳广播 */

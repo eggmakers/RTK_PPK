@@ -420,20 +420,21 @@ bool update_fix2_data(nova_msg_parser *fix2_data)
 	
 	fix2.status = fix2_data->data.bestposu.postype;	
 	fix2.sats_used = fix2_data->data.bestposu.svsused;
+		printf("fix2_mode = %d\r\n",fix2.mode);
     
-    if(fix2_data->data.bestposu.postype > 16 && fix2_data->data.bestposu.postype <= 34)
+    if(fix2_data->data.bestposu.postype >= 16 && fix2_data->data.bestposu.postype < 34)
     {
         fix2.mode = UAVCAN_EQUIPMENT_GNSS_FIX2_MODE_SINGLE;
         fix2.sub_mode = UAVCAN_EQUIPMENT_GNSS_FIX2_SUB_MODE_RTK_FLOAT;
     }
-    else if(fix2_data->data.bestposu.postype > 34 && fix2_data->data.bestposu.postype <= 48)
+    else if(fix2_data->data.bestposu.postype >= 34 && fix2_data->data.bestposu.postype < 48)
     {
         fix2.mode = UAVCAN_EQUIPMENT_GNSS_FIX2_MODE_RTK;
         fix2.sub_mode = UAVCAN_EQUIPMENT_GNSS_FIX2_SUB_MODE_RTK_FLOAT;
     }
-    else if(fix2_data->data.bestposu.postype > 48)
+    else if(fix2_data->data.bestposu.postype >= 48)
     {
-        fix2.mode = UAVCAN_EQUIPMENT_GNSS_FIX2_MODE_RTK;
+        fix2.mode = UAVCAN_EQUIPMENT_GNSS_FIX2_MODE_PPP;
         fix2.sub_mode = UAVCAN_EQUIPMENT_GNSS_FIX2_SUB_MODE_RTK_FIXED;
     }
 			    

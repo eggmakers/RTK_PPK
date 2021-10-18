@@ -358,19 +358,19 @@ void fatfs_log_message(uint8_t* data,uint16_t size)
 {
 	bool led_flag = false;
 	static uint32_t sd_err = 0;
-  UINT fnum;
-  FRESULT result = FR_DISK_ERR;
-  if(file_valid == true )      // 判断文件是否可用
-  {
-    uint8_t i = 0;
-    for(; i < size / 511; i++)          // 每次最多写入511个字节，否则会出错
+    UINT fnum;
+    FRESULT result = 1;
+    if(file_valid == true )      // 判断文件是否可用
     {
-      result = f_write(&SDFile,&data[SIGLE_WRITE_DATA_SIZE * i],SIGLE_WRITE_DATA_SIZE,&fnum);
+        uint8_t i = 0;
+        for(; i < size / 511; i++)          // 每次最多写入511个字节，否则会出错
+        {
+            result = f_write(&SDFile,&data[SIGLE_WRITE_DATA_SIZE * i],SIGLE_WRITE_DATA_SIZE,&fnum);
 			if(result==0 && fnum==SIGLE_WRITE_DATA_SIZE) //写入成功
 			{
-					led_flag = true;
+				led_flag = true;
 			}
-    }
+        }
 
 		if( (size % SIGLE_WRITE_DATA_SIZE) > 0 )
 		{

@@ -79,6 +79,7 @@ rtcmv3数据包,其数据帧格式如下：
 
 *******************************************************************************/
 static uint16_t  parse_rtk_data_ok_cnt = 0;
+static uint16_t  send_rtcm_data_ok_cnt = 0;
 static uint16_t  send_rtk_data_ok_cnt = 0;
 static HAL_StatusTypeDef ret = HAL_ERROR;
 
@@ -184,18 +185,34 @@ static bool rtcm_parse(uint8_t temp)
 /**
 * @brief  处理rtk接收到的DMA数据,解析数据
 * @param data 需要处理的数据缓冲
-* @param data_len 数据缓冲的长度
+* @param recv_len 数据缓冲的长度
 * @retval None
   */
 void parse_rtcm_data(uint8_t data_buff[], uint16_t data_len)
 {
-	for (uint16_t index = 0; index < data_len; index++)
-	{
-		if(rtcm_parse(data_buff[index]) == true)
-		{
-			/** do something */
-			printf("rtcm parse done\r\n");
-		}
-	}
+	uint8_t ret = 0;
+	/** 等待串口可用 */ 
+				while((huart2.gState != HAL_UART_STATE_READY));
+				
+				/** 发送地面端的rtcm数据到板卡 */ 
+				ret = HAL_UART_Transmit_DMA(&huart2, data_buff, data_len);
+				if(ret == HAL_OK)
+				{
+					if( ((send_rtcm_data_ok_cnt++)%20) ==0 )
+					{
+						printf("\r\n>>>>> send_rtcm_data_ok = %d <<<<<\r\n",send_rtcm_data_ok_cnt);
+					}
+				}
+	
+	
+	
+//	for (uint16_t index = 0; index < data_len; index++)
+//	{
+//		if(rtcm_parse(data_buff[index]) == true)
+//		{
+//			/** do something */
+//			printf("rtcm parse done\r\n");
+//		}
+//	}
 }
 
