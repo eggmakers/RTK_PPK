@@ -227,7 +227,7 @@ const char* _initialisation_rtk_cmd[] =
 	"fix none\r\n",
 	"log com1 bestxyzb  ontime 0.1\r\n",	//241, Best available cartesian position and velocity
 	"log com1 psrvelb  ontime 0.1\r\n"
-    "log com1 bestposb  ontime 0.2\r\n",	//42, Best position
+    "log com1 bestposb  ontime 0.1\r\n",	//42, Best position
 	"log com1 psrdopb  onchanged\r\n",		//174, Pseudorange DOP
 	//"log com1 timeb ontime 1\r\n",
 	"log com1 headingb ontime 0.05\r\n",	//971,heading
@@ -1332,7 +1332,7 @@ bool rtk_process_message()
 
     uint16_t messageid = nova_msg1.header.nova_headeru.messageid;
     mmc_GnssEcef* gnss_ecef = get_gnss_ecef();
-	if(messageid == 241)
+	if(messageid == 174)
 	printf("RTK Message ID = %d\r\n",messageid);
 
     switch(messageid)
