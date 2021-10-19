@@ -171,14 +171,17 @@ uavcan.equipment.gnss.ECEFPositionVelocity[<=1] ecef_position_velocity
 #define UAVCAN_EQUIPMENT_GNSS_FIX2_STATUS_TIME_ONLY                           1 // 1
 #define UAVCAN_EQUIPMENT_GNSS_FIX2_STATUS_2D_FIX                              2 // 2
 #define UAVCAN_EQUIPMENT_GNSS_FIX2_STATUS_3D_FIX                              3 // 3
+//#define UAVCAN_EQUIPMENT_GNSS_FIX2_STATUS_FLOAT_FIX                           4 // 4
+//#define UAVCAN_EQUIPMENT_GNSS_FIX2_STATUS_INT_FIX                             5 // 5
 #define UAVCAN_EQUIPMENT_GNSS_FIX2_MODE_SINGLE                                0 // 0
 #define UAVCAN_EQUIPMENT_GNSS_FIX2_MODE_DGPS                                  1 // 1
 #define UAVCAN_EQUIPMENT_GNSS_FIX2_MODE_RTK                                   2 // 2
 #define UAVCAN_EQUIPMENT_GNSS_FIX2_MODE_PPP                                   3 // 3
 #define UAVCAN_EQUIPMENT_GNSS_FIX2_SUB_MODE_DGPS_OTHER                        0 // 0
 #define UAVCAN_EQUIPMENT_GNSS_FIX2_SUB_MODE_DGPS_SBAS                         1 // 1
-#define UAVCAN_EQUIPMENT_GNSS_FIX2_SUB_MODE_RTK_FLOAT                         0 // 0
-#define UAVCAN_EQUIPMENT_GNSS_FIX2_SUB_MODE_RTK_FIXED                         1 // 1
+#define UAVCAN_EQUIPMENT_GNSS_FIX2_SUB_MODE_RTK_SINGLE												0 // 0
+#define UAVCAN_EQUIPMENT_GNSS_FIX2_SUB_MODE_RTK_FLOAT                         1 // 0
+#define UAVCAN_EQUIPMENT_GNSS_FIX2_SUB_MODE_RTK_FIXED                         2 // 1
 
 #define UAVCAN_EQUIPMENT_GNSS_FIX2_NED_VELOCITY_LENGTH                                   3
 #define UAVCAN_EQUIPMENT_GNSS_FIX2_COVARIANCE_MAX_LENGTH                                 36
