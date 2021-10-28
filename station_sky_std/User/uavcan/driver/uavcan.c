@@ -31,6 +31,7 @@ CanardInstance g_canard1;          /** CAN1 UAVCAN 实例 */
 static uint8_t memory_pool1[1024*10]; /** CAN1 内存池 */
 static can_result_e gloal_stat1;   /** Mark global status for CAN1. */
 extern uint8_t SK3_STANDARD;
+//uint8_t sk3_select = 0;
 
 /**
  * @note CAN 消息缓冲区.
@@ -478,6 +479,30 @@ void uavcan_handle_rx(void)
 	}
 
 }
+
+/*
+ * @brief  uavcan 前置接收处理函数.
+ * @param  None
+ * @retval None
+ */
+void uavcan_pre_handle_rx(void)
+{
+    CanardCANFrame frame;
+
+    /** 获取数据 */
+    can_port_e canx = uavcan_framne_pop(&frame);
+
+	if (canx == CAN_PORT_RESERVED)
+	{
+		SK1_select = 0;
+	}
+	if(canx != CAN_PORT_RESERVED)
+	{
+		SK1_select = 1;
+	}
+
+}
+
 /*
  * @brief 定时清除队列数据.
  * @arg port, CAN1 or CAN2
@@ -616,3 +641,18 @@ void uavcan_task(void)
     //uavcan_get_node_info();
 }
 
+void uavcan_estimate_task()
+{
+	
+    /** 发送数据包 */
+    canard_handle_tx(CAN_P1);
+   // canard_handle_tx(CAN_P2);
+
+    uavcan_pre_handle_rx();
+
+    /** 清除队列数据 */
+    canard_handle_clean(CAN_P1);
+    //canard_handle_clean(CAN_P2);
+
+
+}

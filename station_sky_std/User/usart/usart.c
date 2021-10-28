@@ -153,6 +153,22 @@ void MX_USART2_UART_Init(void)
 }
 
 /**
+  * @brief  USART2 shut down init function
+  * @param  None
+  * @retval None
+  */
+void MX_USART2_INPUT_Init(void)
+{
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+	
+	GPIO_InitStruct.Pin = Usart2_TX_Pin|Usart2_RX_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+}
+
+
+/**
   * @brief  USART6 init function
   * @param  None
   * @retval None
@@ -690,6 +706,20 @@ void usart_init(void)
 	MX_USART3_UART_Init();
 	//Uart6, for kx
 	MX_USART6_UART_Init();
+	printf("UAVCAN Message Receive\r\n");
+}
+
+void usart_init_without_usart2(void)
+{
+	//Uart1, for debug
+	MX_USART1_UART_Init();
+	//Uart2, for rtk(shut down)
+	MX_USART2_INPUT_Init();
+	//Uart3, for ppk
+	MX_USART3_UART_Init();
+	//Uart6, for kx
+	MX_USART6_UART_Init();	
+	printf("UAVCAN Message Reject\r\n");	
 }
 
 int fputc(int ch,FILE *file)

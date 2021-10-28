@@ -42,6 +42,10 @@ can_result_e uavcan_init(void);
  * @ret None
  */
 void uavcan_task(void);
+void uavcan_estimate_task(void);
 void uavcan_test(void);
+void uavcan_pre_handle_rx(void);
+
+extern uint8_t SK1_select;
 
 #endif

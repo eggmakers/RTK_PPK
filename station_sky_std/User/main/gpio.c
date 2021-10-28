@@ -25,6 +25,7 @@
 #include "fatfs.h"
 #include "cmsis_armcc.h"
 #include "usb_device.h"
+#include "uavcan.h"
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */
@@ -122,6 +123,12 @@ void led_task(void)
 
         tick = millis();
     }
+		if(SK1_select == 0)
+		{
+			delay_ms(1000);
+			printf("system running\r\n");
+		}
+			
 }
 
 //void SK1_USB_Task()

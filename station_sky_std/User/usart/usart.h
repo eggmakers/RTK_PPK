@@ -38,9 +38,13 @@ extern UART_HandleTypeDef huart3;
 extern DMA_HandleTypeDef hdma_usart2_tx;
 
 /* USER CODE BEGIN Private defines */
-
+#define Usart2_TX_Pin GPIO_PIN_2
+#define Usart2_TX_GPIO_Port GPIOA
+#define Usart2_RX_Pin GPIO_PIN_3
+#define Usart2_RX_GPIO_Port GPIOA
 /* USER CODE END Private defines */
 void usart_init(void);
+void usart_init_without_usart2(void);
 void MX_USART3_UART_Init(void);
 void MX_USART1_UART_Init(void);
 void MX_USART2_UART_Init(void);
