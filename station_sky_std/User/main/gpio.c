@@ -123,7 +123,7 @@ void led_task(void)
 
         tick = millis();
     }
-		if(SK1_select == 0)
+		if(SKmode_select == 0)
 		{
 			delay_ms(1000);
 			printf("system running\r\n");

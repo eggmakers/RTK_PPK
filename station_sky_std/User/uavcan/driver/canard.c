@@ -26,6 +26,8 @@
 
 #include "canard_internals.h"
 #include <string.h>
+#include <stdio.h>
+#include <math.h>
 
 
 #undef MIN
@@ -57,6 +59,8 @@
 #define IS_START_OF_TRANSFER(x)                     ((bool)(((uint32_t)(x) >> 7U) & 0x1U))
 #define IS_END_OF_TRANSFER(x)                       ((bool)(((uint32_t)(x) >> 6U) & 0x1U))
 #define TOGGLE_BIT(x)                               ((bool)(((uint32_t)(x) >> 5U) & 0x1U))
+	
+extern uint8_t sk3_select;
 
 // 发送队列(单链表形式)
 struct CanardTxQueueItem
@@ -270,6 +274,45 @@ void canardPopTxQueue(CanardInstance* ins)
     freeBlock(&ins->allocator, item);
 }
 
+// 前置处理接收到的数据包
+void precanardHandleRxFrame(CanardInstance* ins, const CanardCANFrame* frame, uint64_t timestamp_usec)
+{
+    const CanardTransferType transfer_type = extractTransferType(frame->id);
+    const uint8_t destination_node_id = (transfer_type == CanardTransferTypeBroadcast) ?
+                                        (uint8_t)CANARD_BROADCAST_NODE_ID :
+                                        DEST_ID_FROM_ID(frame->id);
+
+    // TODO: This function should maintain statistics of transfer errors and such.
+
+    if ((frame->id & CANARD_CAN_FRAME_EFF) == 0 ||
+            (frame->id & CANARD_CAN_FRAME_RTR) != 0 ||
+            (frame->id & CANARD_CAN_FRAME_ERR) != 0 ||
+            (frame->data_len < 1))
+    {
+        return;     // Unsupported frame, not UAVCAN - ignore
+    }
+
+    if (transfer_type != CanardTransferTypeBroadcast &&
+            destination_node_id != canardGetLocalNodeID(ins))
+    {
+        return;     // Address mismatch
+    }
+
+    const uint8_t priority = PRIORITY_FROM_ID(frame->id);
+    const uint8_t source_node_id = SOURCE_ID_FROM_ID(frame->id);
+		if(source_node_id == 0x0B || source_node_id == 0x0F)
+		{
+			sk3_select = 1;
+			printf("sk3 mode\r\n");
+		}
+			
+		else
+		{
+			sk3_select = 2;
+			printf("STD mode\r\n");
+		}
+}		
+
 // 处理接收到的数据包
 void canardHandleRxFrame(CanardInstance* ins, const CanardCANFrame* frame, uint64_t timestamp_usec)
 {
@@ -301,7 +344,7 @@ void canardHandleRxFrame(CanardInstance* ins, const CanardCANFrame* frame, uint6
         MAKE_TRANSFER_DESCRIPTOR(data_type_id, transfer_type, source_node_id, destination_node_id);
 
     const uint8_t tail_byte = frame->data[frame->data_len - 1];
-
+		
     CanardRxState* rx_state = NULL;
 
     if (IS_START_OF_TRANSFER(tail_byte))

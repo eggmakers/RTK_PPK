@@ -15,7 +15,9 @@ uint8_t SK3_STANDARD = 0;
 /*sk3_select==0x01,SK3
 	sk3_select==0x02,STD
 */
-uint8_t SK1_select;
+uint8_t SKmode_select;
+/*SKmode_select = 0 :SK1模式
+	SKmode_select = 1 :SK3/STD模式*/
 
 /**
   * @brief System Clock Configuration
@@ -156,20 +158,21 @@ int main(void)
 //	params_init();//放在加载参数之后，判断参数
 	delay_ms(5000);
 	uavcan_estimate_task();
-	if(SK1_select == 0)
+	if(SKmode_select == 0)
 	usart_init_without_usart2();
-	if(SK1_select == 1)
+	if(SKmode_select == 1)
 	usart_init();	
+	pre_uavcan_task();
 	while (1)	
 	{
 		led_task();
 		/** 注意检查板卡rtk数据串口的电阻有没有接上,如果没有,将读不到rtk数据,
 		*  对于sk1飞控来说,是不需要接的,对于sk3,则需要接。
 		*/
-		if(SK1_select == 1)
+		if(SKmode_select == 1)
 		rtk_task();
 		ppk_task();
-		if(SK1_select == 1)
+		if(SKmode_select == 1)
 		uavcan_task();
 		usb_insert_task();
 	}

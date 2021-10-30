@@ -30,4 +30,5 @@ void g_handle_param_get_set(CanardInstance *ins, CanardRxTransfer *transfer);
 void g_handle_param_execute(CanardInstance *ins, CanardRxTransfer *transfer);
 
 extern uavcan_protocol_param_GetSetRequest param[PARAM_TOTAL];
+//extern uint8_t sk3_select;
 #endif /* PARAM_H_ */

@@ -270,7 +270,7 @@ int8_t g_load_flash_param(void)
 	if (LastParamAddress == 0)
 	{
 		init_param();
-		sk3_select = 1;	//默认选择SK3
+//		sk3_select = 1;	//默认选择SK3
 		g_info_log("bootloader default param");
 		return -1;
 	}
@@ -282,7 +282,7 @@ int8_t g_load_flash_param(void)
 		tmp++;
 	}
 	
-	sk3_select = prtocol_param.param[0].value.integer_value;
+//	sk3_select = prtocol_param.param[0].value.integer_value;
 		
 	g_info_log("LoadParam success");
 	return 0;

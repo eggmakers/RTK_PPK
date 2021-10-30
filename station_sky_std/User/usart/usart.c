@@ -706,7 +706,7 @@ void usart_init(void)
 	MX_USART3_UART_Init();
 	//Uart6, for kx
 	MX_USART6_UART_Init();
-	printf("UAVCAN Message Receive\r\n");
+	printf("UAVCAN Message Received\r\n");
 }
 
 void usart_init_without_usart2(void)
@@ -719,7 +719,7 @@ void usart_init_without_usart2(void)
 	MX_USART3_UART_Init();
 	//Uart6, for kx
 	MX_USART6_UART_Init();	
-	printf("UAVCAN Message Reject\r\n");	
+	printf("UAVCAN Message Rejected\r\n");	
 }
 
 int fputc(int ch,FILE *file)

@@ -431,7 +431,12 @@ void canardPopTxQueue(CanardInstance* ins);
 void canardHandleRxFrame(CanardInstance* ins,
                          const CanardCANFrame* frame,
                          uint64_t timestamp_usec);
-
+/**
+ * Processes a received CAN frame with a timestamp.
+ * 前置处理一个接收到的数据帧.
+ * The application will call this function when it receives a new frame from the CAN bus.
+ */
+void precanardHandleRxFrame(CanardInstance* ins, const CanardCANFrame* frame, uint64_t timestamp_usec);												 
 /**
  * Traverses the list of transfers and removes those that were last updated more than timeout_usec microseconds ago.
  * 遍历传输列表并移除已经更新过时的数据.

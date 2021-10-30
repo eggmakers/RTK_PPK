@@ -31,6 +31,7 @@ CanardInstance g_canard1;          /** CAN1 UAVCAN 实例 */
 static uint8_t memory_pool1[1024*10]; /** CAN1 内存池 */
 static can_result_e gloal_stat1;   /** Mark global status for CAN1. */
 extern uint8_t SK3_STANDARD;
+extern uint8_t sk3_select;
 //uint8_t sk3_select = 0;
 
 /**
@@ -481,6 +482,30 @@ void uavcan_handle_rx(void)
 }
 
 /*
+ * @brief  uavcan sk3/std判断处理函数.
+ * @param  None
+ * @retval None
+ */
+void uavcan_judge_rx(void)
+{
+    CanardCANFrame frame;
+
+    /** 获取数据 */
+    can_port_e canx = uavcan_framne_pop(&frame);
+
+//	while (canx != CAN_PORT_RESERVED)
+//	{
+		if (canx == CAN_P1)
+		{
+			precanardHandleRxFrame(&g_canard1, &frame, micros());
+		}
+		
+		canx = uavcan_framne_pop(&frame);
+//	}
+
+}
+
+/*
  * @brief  uavcan 前置接收处理函数.
  * @param  None
  * @retval None
@@ -494,11 +519,11 @@ void uavcan_pre_handle_rx(void)
 
 	if (canx == CAN_PORT_RESERVED)
 	{
-		SK1_select = 0;
+		SKmode_select = 0;
 	}
 	if(canx != CAN_PORT_RESERVED)
 	{
-		SK1_select = 1;
+		SKmode_select = 1;
 	}
 
 }
@@ -622,23 +647,44 @@ void uavcan_task(void)
     //canard_handle_clean(CAN_P2);
 
 	//sk3, ecef
+		if(sk3_select == 0x01)
     send_gnss();
 		
 	
 	//标准化
-    send_fix2();
+	if(sk3_select == 0x02)
+	{
+		send_fix2();
 	
 	  send_MagneticFieldStrength();
     
     send_auxiliary();
-
-
+	}
 
     /** 发送心跳广播 */
     uavcan_send_heartbeat(CAN_P1);
 
     /** 获取节点信息请求 */
     //uavcan_get_node_info();
+}
+
+/**
+ * @brief 采用中断的方式接收数据,然后在while(1)中进行数据处理
+ * @arg None
+ * @ret None
+ */
+void pre_uavcan_task(void)
+{
+
+    /** 发送数据包 */
+    canard_handle_tx(CAN_P1);
+   // canard_handle_tx(CAN_P2);
+
+    uavcan_judge_rx();
+
+    /** 清除队列数据 */
+    canard_handle_clean(CAN_P1);
+    //canard_handle_clean(CAN_P2);
 }
 
 void uavcan_estimate_task()
