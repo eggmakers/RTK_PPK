@@ -9,6 +9,7 @@
 #include "fix2.h"
 #include "Auxiliary.h"
 #include "MagneticFieldStrength.h"
+#include "gpio.h"
 
 #define NOVA_DEBUGGING 0
 
@@ -204,12 +205,12 @@ const char* _initialisation_rtk_cmd[7] =
 const char* _initialisation_rtk_to_flight_cmd[8] =
 {
 	// 关闭 RTK 的所有消息帧
-	"\r\nunlogall com3\r\n",
-	"com com3 115200 n 8 1 n off\r\n",
+	"\r\nunmask GPS\r\n",
+	"unmask glo\r\n",
 	 // 配置成移动站,接收rtcm数据
-	"mode rover\r\n",
-	"fix none\r\n",
-	"log com3 bestposb  ontime 0.2\r\n",
+	"unmask gal\r\n",
+	"unmask qzss\r\n",
+	"unmask bds\r\n",
 	"log com3 bestvelb  ontime 0.2\r\n",
 	"log com3 psrdopb   onchanged\r\n",
 	"saveconfig\r\n",
@@ -1290,11 +1291,13 @@ bool ppk_process_message(void)
             length = nova_msg.header.nova_headeru.headerlength + nova_msg.header.nova_headeru.messagelength + CRC_LENGTH;
             fatfs_log_message((nova_msg.header.data),length);
             mark_counter ++;
+						LED3_TOGGLE();
             break;
         case MARKPOS_EVENTALL:
             length = nova_msg.header.nova_headeru.headerlength + nova_msg.header.nova_headeru.messagelength + CRC_LENGTH;
             fatfs_log_message((nova_msg.header.data),length);
             markevent_counter ++;
+						LED3_TOGGLE();
             break;
 				
         default:
