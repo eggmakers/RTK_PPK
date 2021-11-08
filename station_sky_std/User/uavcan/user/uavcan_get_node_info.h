@@ -14,7 +14,7 @@
 #define SOFTWARE_VERSION_MAJOR 1
 #define SOFTWARE_VERSION_MINOR 0
 #define SOFTWARE_GIT_HASH 20200125
-#define APP_NODE_NAME "mmc.rtk_ppk"
+#define APP_NODE_NAME "mmc.gnss"
 
 /**
  * @brief 硬件版本

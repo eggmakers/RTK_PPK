@@ -373,8 +373,8 @@ static bool gnss_updated = false;
 
 mmc_GnssEcef gnss_ecef =
 {
-    .devid = 86787,
-    .mode = 1,
+    .devid = 10571523,
+    .mode = 0,
 };
 
 void update_heading(mmc_GnssEcef *gnss_ecef,const heading headingb)

@@ -23,6 +23,7 @@
 #define RTK_MODE 0
 #define PPK_MODE 1
 #define RTK_TO_SK1_Mode 2
+#define BDS_SINGLEONLY 3
 
 // 消息帧对应的ID
 #define BESTPOS_ID      0x2A

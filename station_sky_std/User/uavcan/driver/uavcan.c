@@ -691,7 +691,7 @@ void uavcan_estimate_task()
 {
 	
     /** 发送数据包 */
-    canard_handle_tx(CAN_P1);
+//    canard_handle_tx(CAN_P1);
    // canard_handle_tx(CAN_P2);
 
     uavcan_pre_handle_rx();
