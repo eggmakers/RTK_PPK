@@ -391,6 +391,17 @@ typedef struct
     uint8_t gps_glo_sig_mask;
 }bestxyz;
 
+typedef struct 
+{
+	uint32_t sol_status;
+	uint32_t pos_type;
+	float Cxy;
+	float Cxz;
+	float Cyx;
+	float Cyz;
+	float Czx;
+	float Czy;
+}rtkdata;
 
 typedef struct
 {
@@ -567,7 +578,8 @@ typedef union {
     heading      headingb;
     psrdop2      psrdop2b;
     psrdop       psrdop;
-	psrvel		 psrvelb;
+		psrvel		 	 psrvelb;
+		rtkdata			 rtkdatab;
     uint8_t 	 bytes[sizeof(rangecmp)];
     //uint8_t bytes[UART3_DMA_RX_BUFF_SIZE];
 } msgbuffer;

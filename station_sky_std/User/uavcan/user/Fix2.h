@@ -215,7 +215,11 @@ typedef struct
         uint8_t    len;                       // Dynamic array length
         uavcan_equipment_gnss_ECEFPositionVelocity* data;                      // Dynamic Array 792bit[1] max items
     } ecef_position_velocity;
-
+		struct
+		{
+			uint8_t len;
+			float* 	data;
+		}ecef_covariance;
 } uavcan_equipment_gnss_Fix2;
 
 extern
@@ -234,6 +238,7 @@ void send_fix2(void);
 bool update_fix2_data(nova_msg_parser *fix2_data);
 bool update_fix2_psrdop(nova_msg_parser *fix2_data);
 bool update_fix2_bestxyz(nova_msg_parser *fix2_data);
+bool update_fix2_rtkdata(nova_msg_parser *fix2_data);
 bool update_fix2_bestvel(nova_msg_parser *fix2_data);
 void g_init_fix2_struct(void);
 #ifdef __cplusplus

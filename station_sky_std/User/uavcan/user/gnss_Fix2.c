@@ -478,6 +478,20 @@ bool update_fix2_bestxyz(nova_msg_parser *fix2_data)
 	return true;
 }
 
+bool update_fix2_rtkdata(nova_msg_parser *fix2_data)
+{
+	fix2.ecef_covariance.len = 6;
+	fix2.ecef_covariance.data[0] = canardConvertNativeFloatToFloat16(fix2_data->data.rtkdatab.Cxy);
+	fix2.ecef_covariance.data[1] = canardConvertNativeFloatToFloat16(fix2_data->data.rtkdatab.Cxz);
+	fix2.ecef_covariance.data[2] = canardConvertNativeFloatToFloat16(fix2_data->data.rtkdatab.Cyx);
+	
+	fix2.ecef_covariance.data[3] = canardConvertNativeFloatToFloat16(fix2_data->data.rtkdatab.Cyz);
+	fix2.ecef_covariance.data[4] = canardConvertNativeFloatToFloat16(fix2_data->data.rtkdatab.Czx);
+	fix2.ecef_covariance.data[5] = canardConvertNativeFloatToFloat16(fix2_data->data.rtkdatab.Czy);
+	
+	return true;
+}
+
 bool update_fix2_bestvel(nova_msg_parser *fix2_data)
 {
 	fix2.ned_velocity[0] = fix2_data->data.bestvelu.horspd;

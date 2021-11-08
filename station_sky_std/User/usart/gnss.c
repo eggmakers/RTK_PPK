@@ -205,12 +205,12 @@ const char* _initialisation_rtk_cmd[7] =
 const char* _initialisation_rtk_to_flight_cmd[8] =
 {
 	// 关闭 RTK 的所有消息帧
-	"\r\nunmask GPS\r\n",
-	"unmask glo\r\n",
+	"\r\nunmask BDS\r\n",
+	"mask glo\r\n",
 	 // 配置成移动站,接收rtcm数据
-	"unmask gal\r\n",
-	"unmask qzss\r\n",
-	"unmask bds\r\n",
+	"mask gal\r\n",
+	"mask gps\r\n",
+	"mask qzss\r\n",
 	"log com3 bestvelb  ontime 0.2\r\n",
 	"log com3 psrdopb   onchanged\r\n",
 	"saveconfig\r\n",
@@ -232,6 +232,7 @@ const char* _initialisation_rtk_cmd[] =
 	"log com1 psrdopb  onchanged\r\n",		//174, Pseudorange DOP
 	//"log com1 timeb ontime 1\r\n",
 	"log com1 headingb ontime 0.05\r\n",	//971,heading
+	"log com1 eventallb onchanged\r\n",
 };
 
 #endif
@@ -1330,7 +1331,8 @@ bool rtk_process_message()
 	static uint16_t best_id = 0;
 	static uint16_t psrp2_id = 0;
 	static uint16_t head_id = 0;
-
+	static uint16_t rtkdata_id = 0;
+	
 	uint16_t length = 0;
 
     uint16_t messageid = nova_msg1.header.nova_headeru.messageid;
@@ -1340,8 +1342,8 @@ bool rtk_process_message()
 
     switch(messageid)
     {
-
-        case 42:/* bestpos msg*/
+				
+				case 42:/* bestpos msg*/
             state.time_week = nova_msg1.header.nova_headeru.week;
             state.time_week_ms = (uint32_t) nova_msg1.header.nova_headeru.tow;
             state.last_gps_time_ms = HAL_GetTick();
@@ -1422,6 +1424,12 @@ bool rtk_process_message()
 		update_fix2_bestxyz(&nova_msg1);
 			break;
 
+		case 215:/*RTKDATA*/
+			length = nova_msg1.header.nova_headeru.headerlength + nova_msg1.header.nova_headeru.messagelength + CRC_LENGTH;
+      rtkdata_id++;
+			update_fix2_rtkdata(&nova_msg1);
+			break;
+		
 		case PSRDOP2_ID:	//nova板卡配置，和星芯通没有
 			length = nova_msg1.header.nova_headeru.headerlength + nova_msg1.header.nova_headeru.messagelength + CRC_LENGTH;
 			psrp2_id++;
