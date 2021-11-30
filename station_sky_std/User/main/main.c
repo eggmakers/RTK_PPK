@@ -125,21 +125,21 @@ int main(void)
 	bk_up_init();
 	g_init_fix2_struct();
 	/*检测到usb引脚为高电平,软重启,只运行usb 读卡器的功能.(注意检测对应硬件版本的usb插入检测引脚),否则,将有可能一直停留在这里 */
-	if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_SET)
-	{
-		HAL_Delay(20);
-	 
-		if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_SET)
-		{
-			usb_device_init();
-			
-			while(1)
-			{
-				printf("system running...\r\n");
-				led_task();
-			}
-		}
-	}
+//	if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_SET)
+//	{
+//		HAL_Delay(20);
+//	 
+//		if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_SET)
+//		{
+//			usb_device_init();
+//			
+//			while(1)
+//			{
+//				printf("system running...\r\n");
+//				led_task();
+//			}
+//		}
+//	}
 	printf("start delay\n");
 	#if 1
 	/* 等待板卡上电稳定(this is necessary.) **/
@@ -174,7 +174,7 @@ int main(void)
 		ppk_task();
 		if(SKmode_select == 1)
 		uavcan_task();
-		usb_insert_task();
+//		usb_insert_task();
 	}
 }
 
