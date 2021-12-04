@@ -19,7 +19,7 @@
 #include "MagneticFieldStrength.h"
 #include "param.h"
 
-#define CAN1_APP_NODE_ID 15
+#define CAN1_APP_NODE_ID 19
 
 /** CAN 消息缓冲区大小. */
 #define CAN_BUFFER_LEN (1024)

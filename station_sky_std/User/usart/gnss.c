@@ -116,10 +116,10 @@ const char* _initialisation_ppk_cmd[8] =
 	"\r\nunlogall com2\r\n",
 	"interfacemode com2 novatel novatel on\r\n",
 	"log com2 timeb ontime 0.2\r\n",
-	"log com2 rawephemb onnew\r\n",
+	"log com2 rawephemb onchanged\r\n",
 	"log com2 bdsephemerisb onchanged\r\n",
 	"log com2 gloephemerisb onchanged\r\n",
-	"log com2 markposb onnew\r\n",
+	"log com2 markposb onchanged\r\n",
 
 #if SINGLE_ANTENNA
 	"log com2 rangecmpb ontime 1\r\n",
