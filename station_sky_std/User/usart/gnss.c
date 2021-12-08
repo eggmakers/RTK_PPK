@@ -15,9 +15,9 @@
 
 /* rtk模式下选择当前是sk1（1）
 				飞控还是sk3（0）飞控 */
-#define SK1_MODE 0
+#define OEM_MODE 1
 /*NVTEL_MODE==1，诺瓦泰板卡；NVTEL_MODE==0，和芯星通板卡*/
-#define NVTEL_MODE 0
+#define UNI_MODE 0
 /* ppk模式下选择当前是单天线还是双天线 */
 #define SINGLE_ANTENNA 1
 #define RTK_MODE 0
@@ -110,60 +110,8 @@ do {
 
 #endif
 
-#if NVTEL_MODE
-const char* _initialisation_ppk_cmd[8] =
-{
-	"\r\nunlogall com2\r\n",
-	"interfacemode com2 novatel novatel on\r\n",
-	"log com2 timeb ontime 0.2\r\n",
-	"log com2 rawephemb onchanged\r\n",
-	"log com2 bdsephemerisb onchanged\r\n",
-	"log com2 gloephemerisb onchanged\r\n",
-	"log com2 markposb onchanged\r\n",
-
-#if SINGLE_ANTENNA
-	"log com2 rangecmpb ontime 1\r\n",
-#elif
-	"log com2 rangeb ontime 1\r\n",
-#endif
-};
-
-#if SK1_MODE
-const char* _initialisation_rtk_cmd[6] =
-{
-	// 关闭 RTK 的所有消息帧
-	"\r\nunlogall com1\r\n",
-	"serialconfig com1 115200\r\n",
-	"log com1 bestposb ontime 0.2 0 nohold\r\n",
-	"log com1 bestvelb ontime 0.2 0 nohold\r\n",
-	"log com1 psrdopb  ontime 0.2 0 nohold\r\n",
-	 // 配置 RTK 的数据格式
-	"interfacemode com1 rtcmv3 novatel off\r\n",
-};
-
-#else
-const char* _initialisation_rtk_cmd[7] =
-{
-	// 关闭 RTK 的所有消息帧
-	"\r\nunlogall com1\r\n",
-	"serialconfig com1 115200\r\n",
-	"log com1 bestxyzb  ontime 0.2\r\n",
-	"log com1 psrdop2b onchanged\r\n",
-	"log com1 timeb ontime 1\r\n",
-	"log com1 headingb onchanged\r\n",
-	 // 配置 RTK 的数据格式
-	"interfacemode com1 rtcmv3 novatel off\r\n",
-};
-#endif
-
-const char* _initialisation_baud_rate[3] =
-{
-	"\r\nunlogall true\r\n",
-	"com com2 115200 n 8 1 n off\r\n",
-	"saveconfig\r\n",
-};
-
-#else
+#if UNI_MODE
+/*SK1需要的数据帧*/
 const char* _initialisation_ppk_cmd[] =
 {
 	"\r\nunlogall com2\r\n",
@@ -185,25 +133,7 @@ const char* _initialisation_ppk_cmd[] =
 #endif
 };
 
-#if SK1_MODE
-/** sk1需要的数据帧 */
-const char* _initialisation_rtk_cmd[7] =
-{
-	// 关闭 RTK 的所有消息帧
-	"\r\nunlogall com1\r\n",
-	"com com1 115200 n 8 1 n off\r\n",
-	 // 配置成移动站,接收rtcm数据
-	"mode rover\r\n",
-	"fix none\r\n",
-	"log com1 bestposb  ontime 0.2\r\n",
-	"log com1 bestvelb  ontime 0.2\r\n",
-	"log com1 psrdopb   onchanged\r\n",
-};
-
-#else
-
-/*SK1需要的数据帧*/
-const char* _initialisation_rtk_to_flight_cmd[8] =
+const char* _initialisation_rtk_to_flight_cmd[] =
 {
 	// 关闭 RTK 的所有消息帧
 	"\r\nunmask BDS\r\n",
@@ -212,8 +142,6 @@ const char* _initialisation_rtk_to_flight_cmd[8] =
 	"unmask gal\r\n",
 	"unmask gps\r\n",
 	"unmask qzss\r\n",
-	"log com3 bestvelb  ontime 0.2\r\n",
-	"log com3 psrdopb   onchanged\r\n",
 	"saveconfig\r\n",
 };
 
@@ -229,11 +157,50 @@ const char* _initialisation_rtk_cmd[] =
 	"fix none\r\n",
 	"log com1 bestxyzb  ontime 0.1\r\n",	//241, Best available cartesian position and velocity
 	"log com1 psrvelb  ontime 0.1\r\n"
-    "log com1 bestposb  ontime 0.1\r\n",	//42, Best position
+  "log com1 bestposb  ontime 0.1\r\n",	//42, Best position
 	"log com1 psrdopb  onchanged\r\n",		//174, Pseudorange DOP
 	//"log com1 timeb ontime 1\r\n",
 	"log com1 headingb ontime 0.05\r\n",	//971,heading
 	"log com1 eventallb onchanged\r\n",
+	"saveconfig\r\n",
+};
+
+#elif OEM_MODE
+
+const char* _initialisation_ppk_cmd[] =
+{
+	"\r\nunlogall com2\r\n",
+	"markcontrol mark1 enable negative 0 0\r\n",
+	/** 和芯板卡eventall 必须配合gga来使用,gga可以不用记录 */
+	"log com2 gpgga ontime 0.2\r\n",
+	/** 核芯星通天空端板卡的星历数据有问题,需要共用基站端的星历数据 */
+	"log com2 timeb ontime 1\r\n",
+	"log com2 eventallb onchanged\r\n",
+	#if SINGLE_ANTENNA
+	"log com2 rangecmpb ontime 1\r\n",/** 压缩的"观测"数据. */
+	#else
+		"log com2 rangeb ontime 1\r\n",
+	#endif
+	"saveconfig\r\n",
+};
+
+const char* _initialisation_rtk_cmd[] =
+{
+	// 关闭 RTK 的所有消息帧
+	"\r\nunlogall com1\r\n",
+	"com com1 115200\r\n",
+	//"com com1 460800 n 8 1 n off\r\n",
+	 // 配置成移动站,接收rtcm数据
+	"rtkrefmode 1\r\n",
+	"markcontrol mark1 enable negative 0 0\r\n",
+	"log com1 bestxyzb  ontime 0.1\r\n",	//241, Best available cartesian position and velocity
+	"log com1 psrvelb  ontime 0.1\r\n"
+    "log com1 bestposb  ontime 0.1\r\n",	//42, Best position
+	"log com1 psrdopb  ontime 1\r\n",		//174, Pseudorange DOP
+	//"log com1 timeb ontime 1\r\n",
+	"log com1 headingb ontime 0.05\r\n",	//971,heading
+	"log com1 markposa onnew\r\n",
+	"saveconfig\r\n",
 };
 
 #endif
@@ -244,9 +211,6 @@ const char* _initialisation_baud_rate[3] =
 	"com com2 115200 n 8 1 n off\r\n",
 	"saveconfig\r\n",
 };
-#endif
-
-
 
 static const uint8_t NOVA_PREAMBLE1 = 0xaa;
 static const uint8_t NOVA_PREAMBLE2 = 0x44;
@@ -734,11 +698,12 @@ bool init_work_cmd(uint8_t work_mode)
 	{
 		j = (sizeof(_initialisation_ppk_cmd) / sizeof(_initialisation_ppk_cmd[0]));
 	}
+#if UNI_MODE	
 	else if(work_mode == RTK_TO_SK1_Mode)
 	{
 		j = (sizeof(_initialisation_rtk_to_flight_cmd) / sizeof(_initialisation_rtk_to_flight_cmd[0]));
 	}
-
+#endif
     for (uint8_t i = 0; i < j; )
     {
     	if(work_mode == RTK_MODE)
@@ -751,11 +716,13 @@ bool init_work_cmd(uint8_t work_mode)
     		init_str = _initialisation_ppk_cmd[i];
 			printf("  ppk_cmd[%d] %s  \n",i,_initialisation_ppk_cmd[i]);
     	}
+#if UNI_MODE			
 			else if(work_mode == RTK_TO_SK1_Mode)
 			{
 				init_str = _initialisation_rtk_to_flight_cmd[i];
 				printf("  rtk_to_flight_cmd[%d] %s  \n",i,_initialisation_rtk_to_flight_cmd[i]);
 			}
+#endif			
 
         while(novtel_uart->gState != HAL_UART_STATE_READY)
         {
@@ -780,10 +747,12 @@ bool init_work_cmd(uint8_t work_mode)
 					{
 					printf("  %s   is ok\n\n",_initialisation_ppk_cmd[i]);
 					}
+#if UNI_MODE					
 					else if(work_mode == RTK_TO_SK1_Mode)
 					{
 						printf("  %s   is ok\n\n",_initialisation_rtk_to_flight_cmd[i]);
 					}
+#endif					
             		i++;
             		/** 跳出内层循环 */
             		break;
