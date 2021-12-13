@@ -443,7 +443,12 @@ bool update_fix2_data(nova_msg_parser *fix2_data)
         fix2.mode = UAVCAN_EQUIPMENT_GNSS_FIX2_MODE_RTK;
         fix2.sub_mode = UAVCAN_EQUIPMENT_GNSS_FIX2_SUB_MODE_RTK_FIXED;
     }
-			    
+		
+		fix2.covariance.len = 6;
+		
+    fix2.covariance.data[0] = canardConvertNativeFloatToFloat16(fix2_data->data.bestposu.lngsdev);
+    fix2.covariance.data[1] = canardConvertNativeFloatToFloat16(fix2_data->data.bestposu.latsdev);
+    fix2.covariance.data[2] = canardConvertNativeFloatToFloat16(fix2_data->data.bestposu.hgtsdev);			    
 	
 	
     return true;
@@ -451,18 +456,9 @@ bool update_fix2_data(nova_msg_parser *fix2_data)
 
 bool update_fix2_bestxyz(nova_msg_parser *fix2_data)
 {			
-	
-	
-	fix2.covariance.len = 6;
-	
-    fix2.covariance.data[0] = canardConvertNativeFloatToFloat16(fix2_data->data.bestxyzb.pos_x_delta);
-    fix2.covariance.data[1] = canardConvertNativeFloatToFloat16(fix2_data->data.bestxyzb.pos_y_delta);
-    fix2.covariance.data[2] = canardConvertNativeFloatToFloat16(fix2_data->data.bestxyzb.pos_z_delta);
-	
     fix2.covariance.data[3] = canardConvertNativeFloatToFloat16(fix2_data->data.bestxyzb.vel_x_delta);
     fix2.covariance.data[4] = canardConvertNativeFloatToFloat16(fix2_data->data.bestxyzb.vel_y_delta);
     fix2.covariance.data[5] = canardConvertNativeFloatToFloat16(fix2_data->data.bestxyzb.vel_z_delta);
-	
 	
 	fix2.ecef_position_velocity.data->position_xyz_mm[0] = fix2_data->data.bestxyzb.pos_x * 1000;
 	fix2.ecef_position_velocity.data->position_xyz_mm[1] = fix2_data->data.bestxyzb.pos_y * 1000;
@@ -494,9 +490,14 @@ bool update_fix2_rtkdata(nova_msg_parser *fix2_data)
 
 bool update_fix2_bestvel(nova_msg_parser *fix2_data)
 {
-	fix2.ned_velocity[0] = fix2_data->data.bestvelu.horspd;
-	fix2.ned_velocity[1] = fix2_data->data.bestvelu.trkgnd;
-	fix2.ned_velocity[2] = fix2_data->data.bestvelu.vertspd;
+	float vn,ve,vd;
+	vd = -fix2_data->data.bestvelu.vertspd;
+	vn = cos(fix2_data->data.bestvelu.trkgnd) * fix2_data->data.bestvelu.horspd;
+	ve = sin(fix2_data->data.bestvelu.trkgnd) * fix2_data->data.bestvelu.horspd;
+	
+	fix2.ned_velocity[0] = vn;
+	fix2.ned_velocity[1] = ve;
+	fix2.ned_velocity[2] = vd;
 	
 	return true;
 }

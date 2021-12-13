@@ -158,11 +158,13 @@ int main(void)
 //	params_init();//放在加载参数之后，判断参数
 	delay_ms(5000);
 	uavcan_estimate_task();
+//	SKmode_select = 1;//非sk1模式测试
 	if(SKmode_select == 0)
 	usart_init_without_usart2();
 	if(SKmode_select == 1)
 	usart_init();	
 	pre_uavcan_task();
+//	sk3_select = 2;//STD模式测试 2:std
 	while (1)	
 	{
 		led_task();

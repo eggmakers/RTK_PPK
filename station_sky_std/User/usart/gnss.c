@@ -13,11 +13,9 @@
 
 #define NOVA_DEBUGGING 0
 
-/* rtk模式下选择当前是sk1（1）
-				飞控还是sk3（0）飞控 */
-#define OEM_MODE 1
-/*NVTEL_MODE==1，诺瓦泰板卡；NVTEL_MODE==0，和芯星通板卡*/
-#define UNI_MODE 0
+#define OEM_MODE 0
+/*OEM_MODE==1，司南板卡；UNI_MODE==1，和芯星通板卡*/
+#define UNI_MODE 1
 /* ppk模式下选择当前是单天线还是双天线 */
 #define SINGLE_ANTENNA 1
 #define RTK_MODE 0
@@ -156,7 +154,7 @@ const char* _initialisation_rtk_cmd[] =
 	"mode rover\r\n",
 	"fix none\r\n",
 	"log com1 bestxyzb  ontime 0.1\r\n",	//241, Best available cartesian position and velocity
-	"log com1 psrvelb  ontime 0.1\r\n"
+	"log com1 bestvelb  ontime 0.05\r\n"
   "log com1 bestposb  ontime 0.1\r\n",	//42, Best position
 	"log com1 psrdopb  onchanged\r\n",		//174, Pseudorange DOP
 	//"log com1 timeb ontime 1\r\n",
@@ -170,12 +168,13 @@ const char* _initialisation_rtk_cmd[] =
 const char* _initialisation_ppk_cmd[] =
 {
 	"\r\nunlogall com2\r\n",
+	"com com2 115200\r\n",
 	"markcontrol mark1 enable negative 0 0\r\n",
 	/** 和芯板卡eventall 必须配合gga来使用,gga可以不用记录 */
 	"log com2 gpgga ontime 0.2\r\n",
 	/** 核芯星通天空端板卡的星历数据有问题,需要共用基站端的星历数据 */
 	"log com2 timeb ontime 1\r\n",
-	"log com2 eventallb onchanged\r\n",
+	"log com2 markposa onnew\r\n",
 	#if SINGLE_ANTENNA
 	"log com2 rangecmpb ontime 1\r\n",/** 压缩的"观测"数据. */
 	#else

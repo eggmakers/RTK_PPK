@@ -373,7 +373,7 @@ static bool gnss_updated = false;
 
 mmc_GnssEcef gnss_ecef =
 {
-    .devid = 10571523,
+    .devid = 86787,
     .mode = 0,
 };
 
