@@ -133,10 +133,9 @@ const char* _initialisation_ppk_cmd[] =
 
 const char* _initialisation_rtk_to_flight_cmd[] =
 {
-	// 关闭 RTK 的所有消息帧
+	// 关闭 任意卫星信号
 	"\r\nunmask BDS\r\n",
 	"unmask glo\r\n",
-	 // 配置成移动站,接收rtcm数据
 	"unmask gal\r\n",
 	"unmask gps\r\n",
 	"unmask qzss\r\n",
@@ -207,7 +206,7 @@ const char* _initialisation_rtk_cmd[] =
 const char* _initialisation_baud_rate[3] =
 {
 	"\r\n\r\nunlogall com2\r\n",
-	"com com2 115200 n 8 1 n off\r\n",
+	"com com2 115200\r\n",
 	"saveconfig\r\n",
 };
 

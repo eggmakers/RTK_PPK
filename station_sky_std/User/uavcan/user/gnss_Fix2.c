@@ -492,8 +492,8 @@ bool update_fix2_bestvel(nova_msg_parser *fix2_data)
 {
 	float vn,ve,vd;
 	vd = -fix2_data->data.bestvelu.vertspd;
-	vn = cos(fix2_data->data.bestvelu.trkgnd) * fix2_data->data.bestvelu.horspd;
-	ve = sin(fix2_data->data.bestvelu.trkgnd) * fix2_data->data.bestvelu.horspd;
+	vn = cos((fix2_data->data.bestvelu.trkgnd)* PI/180) * fix2_data->data.bestvelu.horspd;
+	ve = sin((fix2_data->data.bestvelu.trkgnd)* PI/180) * fix2_data->data.bestvelu.horspd;
 	
 	fix2.ned_velocity[0] = vn;
 	fix2.ned_velocity[1] = ve;

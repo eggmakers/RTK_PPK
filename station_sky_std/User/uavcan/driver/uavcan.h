@@ -47,6 +47,8 @@ void pre_uavcan_task(void);
 void uavcan_test(void);
 void uavcan_pre_handle_rx(void);
 
+#define PI 3.1415926
+
 extern uint8_t SKmode_select;
 
 #endif
