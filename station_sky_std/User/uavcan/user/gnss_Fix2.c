@@ -426,7 +426,7 @@ bool update_fix2_data(nova_msg_parser *fix2_data)
 			fix2.status = UAVCAN_EQUIPMENT_GNSS_FIX2_STATUS_2D_FIX;
 		else
 			fix2.status = UAVCAN_EQUIPMENT_GNSS_FIX2_STATUS_3D_FIX;
-		printf("fix2_mode = %d\r\n",fix2.mode);
+//		printf("fix2_mode = %d\r\n",fix2.mode);
     
     if(fix2_data->data.bestposu.postype >= 16 && fix2_data->data.bestposu.postype < 34)
     {

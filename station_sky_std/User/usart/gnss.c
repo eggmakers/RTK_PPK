@@ -1305,8 +1305,8 @@ bool rtk_process_message()
 
     uint16_t messageid = nova_msg1.header.nova_headeru.messageid;
     mmc_GnssEcef* gnss_ecef = get_gnss_ecef();
-	if(messageid == 174)
-	printf("RTK Message ID = %d\r\n",messageid);
+//	if(messageid == 174)
+//	printf("RTK Message ID = %d\r\n",messageid);
 
     switch(messageid)
     {
@@ -1321,6 +1321,7 @@ bool rtk_process_message()
             state.location.alt = nova_msg1.data.bestposu.hgt;
 
             state.num_sats = nova_msg1.data.bestposu.svsused;
+						printf("sats_num = %d\r\n",state.num_sats);
 
             state.horizontal_accuracy = (float) ((nova_msg1.data.bestposu.latsdev + nova_msg1.data.bestposu.lngsdev)/2);
             state.vertical_accuracy = (float) nova_msg1.data.bestposu.hgtsdev;
@@ -1352,6 +1353,7 @@ bool rtk_process_message()
 
         case 174:		//auxiliary---PSRDOP
             state.hdop = (uint16_t) (nova_msg1.data.psrdopu.hdop*100);
+						printf("hdop = %d\r\n",state.hdop);
             state.vdop = (uint16_t) (nova_msg1.data.psrdopu.htdop*100);
             
             update_auxiliary(&nova_msg1);
@@ -1367,6 +1369,7 @@ bool rtk_process_message()
                 utc_time_valid = true;
                 utc_time = nova_msg1.data.time;
 
+							
 //                if( is_gnss_init_ok()==1 )
 //                {
 //                	length = nova_msg1.header.nova_headeru.headerlength + nova_msg1.header.nova_headeru.messagelength + CRC_LENGTH;
