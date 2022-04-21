@@ -61,7 +61,7 @@ void clk_conf()
   }
 }
 
-#if 1
+#if 0
 /**
  * @brief  重映射中断向量表.
  * @param  None
@@ -106,7 +106,7 @@ void bk_up_init()
   */
 int main(void)
 {
-	sys_remap();
+//	sys_remap();
 	HAL_Init();
 	clk_conf();
 	time_init();
