@@ -135,10 +135,10 @@ const char* _initialisation_rtk_to_flight_cmd[] =
 {
 	// 关闭 任意卫星信号
 	"\r\nunmask BDS\r\n",
-	"unmask glo\r\n",
-	"unmask gal\r\n",
-	"unmask gps\r\n",
-	"unmask qzss\r\n",
+	"mask glo\r\n",
+	"mask gal\r\n",
+	"mask gps\r\n",
+	"mask qzss\r\n",
 	"saveconfig\r\n",
 };
 
@@ -166,19 +166,46 @@ const char* _initialisation_rtk_cmd[] =
 
 const char* _initialisation_ppk_cmd[] =
 {
-	"\r\nunlogall com2\r\n",
-	"com com2 115200\r\n",
-	"markcontrol mark1 enable negative 0 0\r\n",
-	/** 和芯板卡eventall 必须配合gga来使用,gga可以不用记录 */
-	"log com2 gpgga ontime 0.2\r\n",
-	/** 核芯星通天空端板卡的星历数据有问题,需要共用基站端的星历数据 */
-	"log com2 timeb ontime 1\r\n",
-	"log com2 markposa onnew\r\n",
-	#if SINGLE_ANTENNA
-	"log com2 rangecmpb ontime 1\r\n",/** 压缩的"观测"数据. */
-	#else
-		"log com2 rangeb ontime 1\r\n",
-	#endif
+	"\r\nunlogall com1\r\n",
+	"config com1 460800\r\n",
+	"log com1 rangea ontime 1\r\n",
+
+	"log com1 rangeha ontime 1\r\n",
+	
+	"log com1 ionutca onchanged\r\n",
+	"log com1 bd2ionutca onchanged\r\n",
+	
+	"log com1 psrposa ontime 1\r\n",
+
+		"log com1 psrvela ontime 1\r\n",
+
+"log com1 psrdopa onchanged\r\n"
+
+"log com1 rtkposa ontime 1\r\n"
+
+"log com1 rtkvela ontime 1\r\n"
+
+"log com1 rtkdopa ontime 1\r\n"
+
+"log com1 rtkdataa onchanged\r\n"
+
+"log com1 rtkdataha onchanged\r\n"
+
+"log com1 baserangea onchanged\r\n"
+
+"log com1 matchedposa onchanged\r\n"
+
+"log com1 matchedposha onchanged\r\n"
+
+"log com1 headinga ontime 1\r\n"
+
+"log com1 gpgga ontime 1\r\n"
+
+"log com1 bestposa ontime 1\r\n"
+
+"log com1 bestvela ontime 1\r\n"
+
+"GPNTR com1 1\r\n"
 	"saveconfig\r\n",
 };
 
