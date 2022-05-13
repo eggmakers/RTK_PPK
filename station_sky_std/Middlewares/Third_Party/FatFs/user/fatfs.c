@@ -146,11 +146,13 @@ uint8_t retSD;    /* Return value for SD */
 char SDPath[4];   /* SD logical drive path */
 FATFS SDFatFS;    /* File system object for SD logical drive */
 FIL SDFile;       /* File object for SD */
+FIL LOG_SDFile;
 
 static bool file_valid = false;
 
 int8_t create_folder(void);
 int8_t create_file(void);
+int8_t create_logfile(void);
 void get_file_name(char *p_name,char const *p_ext_name);
 uint8_t num2char(uint8_t num);
 
@@ -204,10 +206,19 @@ bool MX_FATFS_Init(void)
 			}
 			else
 			{
-				status = true;
 				step++;
 			}				
 			break;	
+			
+		case 3:
+			if(create_logfile() != 0)
+			{
+			}
+			else
+			{
+				status = true;
+			}
+			break;
 			
 		default:
 			break;
@@ -291,6 +302,24 @@ int8_t create_file(void)
     return 0;
 }
 
+int8_t create_logfile(void)
+{
+    const char dir[] = "rtk_log";                           // 工作目录
+    char file_name[PPK_FILE_NAME_SIZE];                     // 文件名
+    char file_path[PPK_FILE_NAME_SIZE + sizeof(dir) + 1];   // 文件路径
+
+    f_mkdir(dir);                                           // 创建工作目录，若存在，则不创建
+
+    get_file_name(file_name,".zrchange");                    // 通过系统时间创建文件名
+    snprintf(file_path,sizeof(file_path),"%s/%s",dir,file_name);    // 连接文件名和工作目录
+
+    if(FR_OK != f_open(&LOG_SDFile,file_path,FA_CREATE_ALWAYS | FA_WRITE | FA_READ))    // 新建/打开文件
+    {
+    	return 1;
+    }
+    return 0;
+}
+
 /**
   * @brief  获取文件名
   * @param  p_name:文件名返回
@@ -302,6 +331,31 @@ void get_file_name(char *p_name,char const *p_ext_name)
 {
 	nova_time *utc_time = get_utc_time();                  // 获取系统时间结构体
     memcpy(p_name,"sky_",4);                                // 文件名前缀
+
+    p_name[4] =  num2char(utc_time->utc_year / 1000);
+    p_name[5] =  num2char(utc_time->utc_year % 1000 / 100);
+    p_name[6] = num2char(utc_time->utc_year % 100 / 10);
+    p_name[7] = num2char(utc_time->utc_year % 10);
+
+    p_name[8] = num2char(utc_time->utc_month / 10);
+    p_name[9] = num2char(utc_time->utc_month % 10);
+
+    p_name[10] = num2char(utc_time->utc_day / 10);
+    p_name[11] = num2char(utc_time->utc_day % 10);
+
+    p_name[12] = num2char(utc_time->utc_hour / 10);
+    p_name[13] = num2char(utc_time->utc_hour % 10);
+
+    p_name[14] = num2char(utc_time->utc_min / 10);
+    p_name[15] = num2char(utc_time->utc_min % 10);
+
+    memcpy(&p_name[16],p_ext_name,4);                       // 文件扩展名
+}
+
+void get_log_file_name(char *p_name,char const *p_ext_name)
+{
+	nova_time *utc_time = get_utc_time();                  // 获取系统时间结构体
+    memcpy(p_name,"log_",4);                                // 文件名前缀
 
     p_name[4] =  num2char(utc_time->utc_year / 1000);
     p_name[5] =  num2char(utc_time->utc_year % 1000 / 100);
@@ -344,6 +398,11 @@ void close_file(void)
 	{
 		f_close(&SDFile);
 	}
+}
+
+void close_logfile(void)
+{
+	f_close(&LOG_SDFile);
 }
 
 /**
