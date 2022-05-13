@@ -135,10 +135,10 @@ const char* _initialisation_rtk_to_flight_cmd[] =
 {
 	// 关闭 任意卫星信号
 	"\r\nunmask BDS\r\n",
-	"mask glo\r\n",
-	"mask gal\r\n",
-	"mask gps\r\n",
-	"mask qzss\r\n",
+	"unmask glo\r\n",
+	"unmask gal\r\n",
+	"unmask gps\r\n",
+	"unmask qzss\r\n",
 	"saveconfig\r\n",
 };
 
